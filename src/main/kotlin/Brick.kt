@@ -10,10 +10,11 @@ const val LeftMarginBricks = BRICK_WIDTH
 const val RightMarginBricks = BRICK_WIDTH
 const val SINGLE_HIT = 1
 const val DOUBLE_HIT = 2
-const val INDESTRUCTIBLE = 0
+const val INDESTRUCTIBLE = -1
 const val ORANGE_COLOR = 0xFFA500
 const val SILVER_COLOR = 0xC0C0C0
 const val GOLD_COLOR = 0xDAA520
+const val BRICK_STROKE_OFFSET_ADJUSTMENT = 2
 
 const val BRICK_HORIZONTAL_DETECTION_OFFSET = MAX_DELTA_X
 const val BRICK_VERTICAL_DETECTION_OFFSET = MAX_DELTA_Y
@@ -84,25 +85,8 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     return Collision.NONE
 }
 
-val basicTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
-val allColors: BricksColumn = BricksColumn(basicTypes.map { BricksRow(listOf(it, it, it)) })
-val middleColors: BricksColumn = BricksColumn(
-    rows = listOf(
-        BricksRow(bricks = listOf(BrickType.WHITE, BrickType.GOLD, BrickType.WHITE)),
-        BricksRow(bricks = listOf(BrickType.ORANGE, BrickType.ORANGE, BrickType.ORANGE)),
-        BricksRow(bricks = listOf(BrickType.CYAN, BrickType.CYAN, BrickType.CYAN)),
-        BricksRow(bricks = listOf(BrickType.GREEN, BrickType.GREEN, BrickType.GREEN)),
-        BricksRow(bricks = listOf(BrickType.RED, BrickType.RED, BrickType.RED)),
-        BricksRow(bricks = listOf(BrickType.BLUE, BrickType.BLUE, BrickType.BLUE)),
-        BricksRow(bricks = listOf(BrickType.MAGENTA, BrickType.MAGENTA, BrickType.MAGENTA)),
-        BricksRow(bricks = listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
-    )
-)
-val bricksLayout: List<BricksColumn> = listOf(
-    allColors,
-    middleColors,
-    allColors
-)
+fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)
 
 
+fun Brick.isBroken() = this.hitCounter == this.type.hits
 

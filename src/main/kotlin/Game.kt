@@ -8,8 +8,6 @@ import pt.isel.canvas.WHITE
 const val WIDTH = BRICK_WIDTH * 13
 const val HEIGHT = 600
 const val BACKGROUND_COLOR = BLACK
-
-const val CANVAS_INVALID_POS_OFFSET = 10
 const val TIME_TICK_MLS = 10
 
 enum class Collision {
@@ -29,7 +27,8 @@ data class Game(
     val area: Area = Area(),
     val balls: List<Ball> = emptyList(),
     val racket: Racket = Racket(),
-    val bricks: List<Brick> = emptyList()
+    val bricks: List<Brick> = emptyList(),
+    val points: Int = 0
 )
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
@@ -40,9 +39,9 @@ fun gameStart() {
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
         val updatedBalls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket, bricks = game.bricks)
-
+        val bricks = clearBrokenBricks(game.bricks, game.balls)
         if (!game.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
-        game = game.copy(balls = updatedBalls)
+        game = game.copy(balls = updatedBalls, bricks = bricks)
         drawGame(game)
     }
 
@@ -53,6 +52,22 @@ fun gameStart() {
     arena.onKeyPressed {
         if (it.code == ESCAPE_CODE) arena.close()
     }
+}
+
+fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
+    val newBricks = bricks.map { brick ->
+        if (balls.any {
+                checkBrickCollision(
+                    it,
+                    brick
+                ) != Collision.NONE
+            })
+            brick.copy(hitCounter = brick.hitCounter + 1)
+        else
+            brick
+
+    }
+    return newBricks.filter { !it.isBroken() }
 }
 
 /*
@@ -103,7 +118,6 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
     )
 
 fun drawBricks(bricks: List<Brick>) {
-    val BRICK_STROKE_OFFSET_ADJUSTMENT = 2
     bricks.forEach {
         arena.drawRect(
             x = it.x,
@@ -135,7 +149,7 @@ fun generateWallBricks(): List<Brick> {
 
 fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
     var lista: List<Brick> = emptyList()
-    var y = TopMarginBricks * 3
+    var y = TopMarginBricks
     var x = 0
     var initialX = 0
     var columnSize = 0
@@ -152,10 +166,10 @@ fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
         }
         initialX += BRICK_WIDTH * (columnSize + 1)
         x = initialX
-        y = TopMarginBricks * 3
+        y = TopMarginBricks
     }
 
-    return lista;
+    return lista
 }
 
 /*

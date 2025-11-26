@@ -8,10 +8,8 @@ const val BALL_COUNT_FONTSIZE = 30
 const val BALL_COUNTER_YCORD = 585
 const val BALL_RADIUS = 7
 const val BALL_COLOR = CYAN
-const val BALL_GENERATOR_PERIOD = 5000
 const val MAX_DELTA_X = 6
 const val MAX_DELTA_Y = 4
-const val MIN_DELTA_Y = 1
 
 data class Ball(val x: Int = 0, val y: Int = 0, val deltaX: Int = 0, val deltaY: Int = 0)
 
