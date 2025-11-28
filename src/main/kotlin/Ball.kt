@@ -51,7 +51,7 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
     for (brick in bricks) {
         val res = checkBrickCollision(this, brick)
         if (res != Collision.NONE) {
-            println("$res -> $this -> $brick")
+                println("$res -> $this -> $brick")
             return res
         }
     }
@@ -133,7 +133,7 @@ fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
 
     val newBallDeltaX = ball.adjustDirectionAfterColliding(newDeltaX)
 
-    println("Ball DeltaX ${ball.deltaX} - NEW deltaX $newDeltaX, DELTA after adjustment $newBallDeltaX, BATEU EM ${ball.x - racket.x} ")
+    //println("Ball DeltaX ${ball.deltaX} - NEW deltaX $newDeltaX, DELTA after adjustment $newBallDeltaX, BATEU EM ${ball.x - racket.x} ")
 
     return ball.copy(deltaX = newBallDeltaX, deltaY = newDeltaY)
 }

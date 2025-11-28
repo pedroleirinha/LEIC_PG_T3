@@ -20,3 +20,46 @@ val bricksLayout: List<BricksColumn> = listOf(
     allColors
 )
 
+val singleBricksLayout: List<BricksColumn> = listOf(
+    BricksColumn(
+        listOf(
+            BricksRow(bricks = listOf(BrickType.WHITE)),
+        )
+    )
+)
+
+fun generateWallBricks(): List<Brick> {
+    var lista: List<Brick> = emptyList()
+    for (x in LeftMarginBricks * 4..WIDTH - RightMarginBricks * 4 step BRICK_WIDTH) {
+        for (y in TopMarginBricks..TopMarginBricks + BRICK_HEIGHT * 3 step BRICK_HEIGHT + 2) {
+            lista = lista + Brick(x, y, BrickType.entries.random())
+        }
+    }
+    return lista
+}
+
+fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
+    var lista: List<Brick> = emptyList()
+    var y = TopMarginBricks
+    var x = 0
+    var initialX = 0
+    var columnSize = 0
+
+    for (column in layout) {
+        column.rows.forEach {
+            columnSize = it.bricks.size
+            it.bricks.forEach {
+                x += BRICK_WIDTH
+                lista = lista + Brick(x, y, it)
+            }
+            y += BRICK_HEIGHT
+            x = initialX
+        }
+        initialX += BRICK_WIDTH * (columnSize + 1)
+        x = initialX
+        y = TopMarginBricks
+    }
+
+    return lista
+}
+

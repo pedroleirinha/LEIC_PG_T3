@@ -38,10 +38,15 @@ fun gameStart() {
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
-        val updatedBalls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket, bricks = game.bricks)
         val bricks = clearBrokenBricks(game.bricks, game.balls)
+        val points = sumPoints(bricks)
+        val updatedBalls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket, bricks = game.bricks)
+
+        val filteredBricks = bricks.filter { !it.isBroken() }
         if (!game.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
-        game = game.copy(balls = updatedBalls, bricks = bricks)
+
+        game = game.copy(bricks = filteredBricks, balls = updatedBalls, points = game.points + points)
+
         drawGame(game)
     }
 
@@ -62,13 +67,19 @@ fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
                     brick
                 ) != Collision.NONE
             })
-            brick.copy(hitCounter = brick.hitCounter + 1)
+            brick.addHit()
         else
             brick
 
     }
-    return newBricks.filter { !it.isBroken() }
+    return newBricks
 }
+
+fun sumPoints(bricks: List<Brick>) =
+    bricks
+        .filter { it.hitCounter > 0 }
+        .fold(0) { sum, brick -> sum + brick.type.points * brick.hitCounter }
+
 
 /*
 * Desenha as bolas em jogo no canvas
@@ -78,12 +89,12 @@ fun drawBalls(ballsList: List<Ball>) {
 }
 
 /*
-* Desenha no canvas o número de bolas em jogo no momento*/
-fun drawBallsCounter(balls: List<Ball>) {
+* Desenha no canvas o número de pontos adquiridos durante o jogo no momento*/
+fun drawGamePoints(points: Int) {
     arena.drawText(
         x = WIDTH / 2,
         y = BALL_COUNTER_YCORD,
-        txt = balls.size.toString(),
+        txt = points.toString(),
         color = WHITE,
         fontSize = BALL_COUNT_FONTSIZE
     )
@@ -93,9 +104,16 @@ fun drawBallsCounter(balls: List<Ball>) {
 * A cada step do jogo, remove as bolas fora de jogo, verifica as colisões e atualiza os movimentos das bolas para serem desenhadas novamente.
 * */
 fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket, bricks: List<Brick>): List<Ball> {
-    //val filteredBalls = filterallsOutOfBounds(balls = balls)
+
+    val filteredBalls = filterBallsOutOfBounds(balls = balls)
     val newBallsUpdated =
-        balls.map { checkAndUpdateBallMovementAfterCollision(ball = it, racket = racket, bricks) }
+        (if (runningEnviroment == ENVIROMENT.DEBUG) balls else filteredBalls).map {
+            checkAndUpdateBallMovementAfterCollision(
+                ball = it,
+                racket = racket,
+                bricks = bricks
+            )
+        }
     val ballsMoved = updateBallsMovement(balls = newBallsUpdated)
     return ballsMoved
 }
@@ -137,47 +155,12 @@ fun drawBricks(bricks: List<Brick>) {
     }
 }
 
-fun generateWallBricks(): List<Brick> {
-    var lista: List<Brick> = emptyList()
-    for (x in LeftMarginBricks * 4..WIDTH - RightMarginBricks * 4 step BRICK_WIDTH) {
-        for (y in TopMarginBricks..TopMarginBricks + BRICK_HEIGHT * 3 step BRICK_HEIGHT + 2) {
-            lista = lista + Brick(x, y, BrickType.entries.random())
-        }
-    }
-    return lista
-}
-
-fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
-    var lista: List<Brick> = emptyList()
-    var y = TopMarginBricks
-    var x = 0
-    var initialX = 0
-    var columnSize = 0
-
-    for (column in layout) {
-        column.rows.forEach {
-            columnSize = it.bricks.size
-            it.bricks.forEach {
-                x += BRICK_WIDTH
-                lista = lista + Brick(x, y, it)
-            }
-            y += BRICK_HEIGHT
-            x = initialX
-        }
-        initialX += BRICK_WIDTH * (columnSize + 1)
-        x = initialX
-        y = TopMarginBricks
-    }
-
-    return lista
-}
-
 /*
 * Desenha o jogo no canvas, que inclui desenhar a raquete, bolas e o contador de bolas em jogo
 * */
 fun drawGame(game: Game) {
     drawRacket(racket = game.racket)
     drawBalls(ballsList = game.balls)
-    drawBallsCounter(balls = game.balls)
+    drawGamePoints(game.points)
     drawBricks(bricks = game.bricks)
 }
