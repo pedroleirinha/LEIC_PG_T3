@@ -1,4 +1,4 @@
-package org.example
+package org.example.Models
 
 import pt.isel.canvas.CYAN
 import kotlin.math.sign

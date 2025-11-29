@@ -1,11 +1,7 @@
-package org.example
+package org.example.Models
 
 import pt.isel.canvas.BLACK
 import pt.isel.canvas.Canvas
-import pt.isel.canvas.ESCAPE_CODE
-import pt.isel.canvas.WHITE
-import kotlin.math.abs
-import kotlin.math.sign
 
 const val WIDTH = BRICK_WIDTH * 13
 const val HEIGHT = 600
@@ -31,46 +27,17 @@ data class Game(
     val balls: List<Ball> = emptyList(),
     val racket: Racket = Racket(),
     val bricks: List<Brick> = emptyList(),
-    val points: Int = 0
+    val points: Int = 0,
+    val lives: Int = 5
 )
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
-
-fun gameStart() {
-    var game = Game(bricks = generateInitialBricksLayout(bricksLayout), balls = listOf(generateRandomBall()))
-
-    arena.onTimeProgress(period = TIME_TICK_MLS) {
-        arena.erase()
-        game = game.progressGame()
-
-        drawGame(game)
-    }
-
-    arena.onMouseMove { me ->
-        game = adjustHorizontalCordForStuckBall(game, me.x)
-    }
-
-    arena.onMouseDown { me ->
-        if (me.down) {
-            game = unstuckBalls(game)
-        }
-    }
-
-    arena.onKeyPressed {
-        if (it.code == ESCAPE_CODE) arena.close()
-        if (it.code == KEY_S_CODE) {
-            game = game.copy(racket = game.racket.toggleStickiness())
-            println("sticky ${game.racket.sticky}")
-        }
-    }
-}
 
 fun unstuckBalls(game: Game) = game.copy(balls = game.balls.map {
     if (it.stuck) {
         it.copy(stuck = false)
     } else it
 })
-
 
 fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
     val updatedRacket = game.racket.moveTo(to = mouseX)
@@ -85,16 +52,6 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
     return game.copy(balls = newBalls, racket = updatedRacket)
 }
 
-fun Game.progressGame(): Game {
-    val bricks = clearBrokenBricks(this.bricks, this.balls)
-    val points = sumPoints(bricks)
-    val updatedBalls = handleGameBallsBehaviour(balls = this.balls, racket = this.racket, bricks = this.bricks)
-
-    val filteredBricks = bricks.filter { !it.isBroken() }
-    if (!this.balls.isEmpty() && updatedBalls.isEmpty()) arena.close()
-
-    return copy(bricks = filteredBricks, balls = updatedBalls, points = this.points + points)
-}
 
 fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
@@ -117,26 +74,6 @@ fun sumPoints(bricks: List<Brick>) =
         .filter { it.hitCounter > 0 }
         .fold(0) { sum, brick -> sum + brick.type.points * brick.hitCounter }
 
-
-/*
-* Desenha as bolas em jogo no canvas
-* */
-fun drawBalls(ballsList: List<Ball>) {
-    ballsList.forEach { arena.drawCircle(xCenter = it.x, yCenter = it.y, radius = BALL_RADIUS, color = BALL_COLOR) }
-}
-
-/*
-* Desenha no canvas o número de pontos adquiridos durante o jogo no momento*/
-fun drawGamePoints(points: Int) {
-    arena.drawText(
-        x = WIDTH / 2,
-        y = BALL_COUNTER_YCORD,
-        txt = points.toString(),
-        color = WHITE,
-        fontSize = BALL_COUNT_FONTSIZE
-    )
-}
-
 /*
 * A cada step do jogo, remove as bolas fora de jogo, verifica as colisões e atualiza os movimentos das bolas para serem desenhadas novamente.
 * */
@@ -144,7 +81,7 @@ fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket, bricks: List<Bri
 
     val filteredBalls = filterBallsOutOfBounds(balls = balls)
     val newBallsUpdated =
-        (if (runningEnviroment == ENVIROMENT.DEBUG) balls else filteredBalls).map {
+        (if (runningENVIRONMENT == ENVIRONMENT.DEBUG) balls else filteredBalls).map {
             checkAndUpdateBallMovementAfterCollision(
                 ball = it,
                 racket = racket,
@@ -172,32 +109,13 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
         brickCollision = ball.checkBricksCollision(bricks)
     )
 
-fun drawBricks(bricks: List<Brick>) {
-    bricks.forEach {
-        arena.drawRect(
-            x = it.x,
-            y = it.y,
-            width = BRICK_WIDTH,
-            height = BRICK_HEIGHT,
-            color = it.type.color
-        )
-        arena.drawRect(
-            x = it.x + BRICK_STROKE_OFFSET_ADJUSTMENT,
-            y = it.y + BRICK_STROKE_OFFSET_ADJUSTMENT,
-            width = BRICK_WIDTH - BRICK_STROKE_OFFSET_ADJUSTMENT,
-            height = BRICK_HEIGHT - BRICK_STROKE_OFFSET_ADJUSTMENT,
-            color = BLACK,
-            thickness = 2
-        )
+fun generateLives(lives: Int): List<Ball> {
+    var initialX = BALL_RADIUS * 2
+    var livesList: List<Ball> = emptyList()
+    for (live in 0 until lives) {
+        val newBall = Ball(x = initialX, y = HEIGHT - 20, 0, 0, true)
+        initialX += BALL_RADIUS * 3
+        livesList = livesList + newBall
     }
-}
-
-/*
-* Desenha o jogo no canvas, que inclui desenhar a raquete, bolas e o contador de bolas em jogo
-* */
-fun drawGame(game: Game) {
-    drawRacket(racket = game.racket)
-    drawBalls(ballsList = game.balls)
-    drawGamePoints(game.points)
-    drawBricks(bricks = game.bricks)
+    return livesList
 }

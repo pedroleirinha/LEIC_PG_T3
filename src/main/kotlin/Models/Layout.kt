@@ -1,4 +1,4 @@
-package org.example
+package org.example.Models
 
 val basicTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
 val allColors: BricksColumn = BricksColumn(basicTypes.map { BricksRow(listOf(it, it, it)) })

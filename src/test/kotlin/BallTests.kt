@@ -1,4 +1,11 @@
-import org.example.*
+import org.example.Models.Ball
+import org.example.Models.Brick
+import org.example.Models.BrickType
+import org.example.Models.Collision
+import org.example.Models.checkBrickHorizontalCollision
+import org.example.Models.checkBrickVerticalCollision
+import org.example.Models.isCollidingWithBrick
+import org.example.Models.sumPoints
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
