@@ -2,6 +2,7 @@ package org.example.models
 
 import org.example.views.GIFT_CIRCLE_RADIUS
 import org.example.views.RACKET_HEIGHT
+import org.example.views.RACKET_INITIAL_WIDTH
 import pt.isel.canvas.BLUE
 import pt.isel.canvas.CYAN
 import pt.isel.canvas.GREEN
@@ -80,12 +81,12 @@ fun giftDuplicateBall(balls: List<Ball>): List<Ball> {
 }
 
 fun giftCancelGifts(game: Game): Game {
-    //val newBallsList: List<Ball> = game.balls.map { it.copy(weight = 1.0, stuck = false) }
-    //val racket: Racket = game.racket.copy(sticky = false, extended = false, width = RACKET_INITIAL_WIDTH)
+    val newBallsList: List<Ball> = game.balls.map { it.copy(weight = 1.0, stuck = false) }
+    val racket: Racket = game.racket.copy(sticky = false, extended = false, width = RACKET_INITIAL_WIDTH)
 
-    //return game.copy(balls = newBallsList, racket = racket)
 
-    return game.copy(activeGifts = emptyList())
+
+    return game.copy(balls = newBallsList, racket = racket, activeGifts = emptyList())
 }
 
 

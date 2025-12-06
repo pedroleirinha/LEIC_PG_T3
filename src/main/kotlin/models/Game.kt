@@ -73,6 +73,7 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 
     return game.copy(balls = newBalls, racket = updatedRacket)
 }
+
 fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
@@ -85,6 +86,7 @@ fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick>
     }
     return newBricks
 }
+
 fun sumPoints(bricks: List<Brick>) =
     bricks
         .filter { it.hitCounter > 0 }
@@ -128,3 +130,91 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
 fun generateLives(lives: Int): List<Ball> = (1..lives).map {
     Ball(x = it * LIVES_X_SPACE, y = LIVES_Y_POSITION, stuck = true)
 }
+
+
+fun Game.progressGame(): Game {
+    val newGameAfterBricks = handleGameBricks(this)
+    val newGameAfterGifs = handleGifts(newGameAfterBricks)
+
+    val filterBrokenBricks = newGameAfterGifs.bricks.filter { !it.isBroken() }
+
+    return newGameAfterGifs.copy(bricks = filterBrokenBricks)
+        .handleActiveGifts()
+
+}
+
+fun handleGameBricks(game: Game): Game {
+    val bricks = addHitsToCollidedBricks(game.bricks, game.balls)
+    val points = sumPoints(bricks)
+    val updatedBalls = handleGameBallsBehaviour(balls = game.balls, racket = game.racket, bricks = game.bricks)
+
+    return game.copy(bricks = bricks, balls = updatedBalls, points = game.points + points)
+}
+
+fun addOtherActiveGifts(activeGifts: List<Gift>, caughtGifts: List<Gift>): List<Gift> {
+    return activeGifts + caughtGifts.filter { !it.type.isGlue() }
+}
+
+fun updateGlueGiftCounter(activeGifts: List<Gift>, numberToAdd: Int): List<Gift> {
+    return activeGifts.map { it.copy(useCount = if (it.type.isGlue()) it.useCount + numberToAdd else it.useCount) }
+}
+
+fun checkIfGlueGiftIsActive(activeGifts: List<Gift>): Boolean {
+    return activeGifts.filter { it.type.isGlue() }.isNotEmpty()
+}
+
+fun handleGifts(game: Game): Game {
+    val newActiveGifts: List<Gift> = game.bricks
+        .filter { it.hitCounter == it.type.hits && it.gift != null }
+        .map { it.gift as Gift } + game.giftsOnScreen
+
+    val newGiftsPosition = updateGiftsIconMovement(newActiveGifts)
+    val caughtGifts = newGiftsPosition.filter { it.isCollidingWithRacket(game.racket) }
+
+    val justGlueGifts = caughtGifts.filter { it.type.isGlue() }
+    val accGlueCount = justGlueGifts.fold(initial = 0) { sum, elem -> sum + elem.useCount }
+
+    val finalGifts: List<Gift> = if (justGlueGifts.isNotEmpty() && checkIfGlueGiftIsActive(game.activeGifts))
+        updateGlueGiftCounter(
+            activeGifts =
+                addOtherActiveGifts(activeGifts = game.activeGifts, caughtGifts),
+            numberToAdd = accGlueCount
+        )
+    else game.activeGifts + caughtGifts
+
+    val uncaughtGifts = clearGiftsCaught(gifts = newGiftsPosition, game.racket)
+
+    return game.copy(activeGifts = finalGifts, giftsOnScreen = uncaughtGifts)
+}
+
+fun clearGiftsCaught(gifts: List<Gift>, racket: Racket) = gifts.filter { !it.isCollidingWithRacket(racket) }
+fun updateGiftsIconMovement(gifts: List<Gift>) =
+    gifts.map { it.copy(y = it.y + it.deltaY) }.filter { !it.isOutOfBounds() }
+
+fun Game.handleActiveGifts(): Game {
+    var newUpdatedGame = this
+
+    val gifts = this.activeGifts.map {
+        if (!it.active) {
+            newUpdatedGame = chooseGiftAction(it, newUpdatedGame)
+            println("action fired $it")
+            it.copy(active = true)
+        } else it
+    }
+
+    val unfinishedGifts = gifts.filter { it.useCount != 0 }
+    val glueGifts = checkIfGlueGiftIsActive(unfinishedGifts)
+
+    return newUpdatedGame.copy(
+        activeGifts = unfinishedGifts,
+        racket = if (glueGifts) racket.stuck() else racket.unStuck()
+    )
+}
+
+/*
+* If there are not bricks, other than INDESTRUCTIBLE, left than the game ends
+* */
+fun Game.isGameOver() = (
+        this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
+        ) || (this.balls.isEmpty() && this.lives == 0)
+
