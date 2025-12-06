@@ -8,7 +8,7 @@ enum class ENVIRONMENT {
     PROD
 }
 
-val runningENVIRONMENT = ENVIRONMENT.PROD
+val runningENVIRONMENT = ENVIRONMENT.DEBUG
 
 fun main() {
     onStart {

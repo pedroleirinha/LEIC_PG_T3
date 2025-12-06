@@ -4,6 +4,9 @@ package org.example.views
 import org.example.models.Racket
 import org.example.models.WIDTH
 import org.example.models.arena
+import pt.isel.canvas.BLACK
+import pt.isel.canvas.BLUE
+import pt.isel.canvas.CYAN
 import pt.isel.canvas.RED
 import pt.isel.canvas.WHITE
 
@@ -18,13 +21,32 @@ const val RACKET_DEFAULT_Y_CORD = 540
 const val RACKET_INITIAL_WIDTH = RACKET_CENTRAL_ZONE + RACKET_MIDDLE_ZONE * 2 + RACKET_EDGE_ZONE * 2
 const val RACKET_STARTING_POS_X = (WIDTH / 2) - (RACKET_INITIAL_WIDTH / 2)
 const val RACKET_X_CORD = RACKET_STARTING_POS_X
-const val RACKET_HEIGHT = 10
+const val RACKET_HEIGHT = 12
 const val RACKET_TOP_LAYER_HEIGHT = 5
 const val RACKET_BASE_COLOR = WHITE
 const val RACKET_EDGES_COLOR = RED
 
 fun adjustSizeIfExtended(racket: Racket, width: Int):Int {
     return if(racket.extended) width + 30 else width
+}
+
+fun drawRacketGlueSection(racket: Racket, useCount: Int = 0) {
+    val offset = 20
+    arena.drawRect(
+        x = racket.x + racket.width / 6,
+        y = racket.y + RACKET_TOP_LAYER_HEIGHT,
+        width = racket.width - offset,
+        height = RACKET_HEIGHT - RACKET_TOP_LAYER_HEIGHT,
+        color = CYAN
+    )
+
+    arena.drawText(
+        x = racket.x + (racket.width / 2),
+        y = racket.y + RACKET_TOP_LAYER_HEIGHT * 2,
+        txt = "$useCount",
+        color = BLACK,
+        fontSize = 8
+    )
 }
 
 fun drawRacketBottomLayer(racket: Racket) {
@@ -90,7 +112,8 @@ fun drawRacketTopLayer(racket: Racket) {
     drawRacketCenter(racket)
 }
 
-fun drawRacket(racket: Racket) {
+fun drawRacket(racket: Racket, glueCount: Int = 0) {
     drawRacketBottomLayer(racket)
     drawRacketTopLayer(racket)
+    if(glueCount > 0) drawRacketGlueSection(racket, glueCount)
 }

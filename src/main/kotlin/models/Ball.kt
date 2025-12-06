@@ -17,9 +17,9 @@ const val BALL_COLOR = CYAN
 const val MAX_DELTA_X = 6
 const val MAX_DELTA_Y = 4
 const val INITIAL_DELTA_Y = 2
-const val BALL_MAX_WEIGHT = 2.0
-const val BALL_MIN_WEIGHT = 0.4
-const val BALL_MAX_WEIGHT_DELTA = 0.2
+const val BALL_MAX_WEIGHT = 1.5
+const val BALL_MIN_WEIGHT = 0.5
+const val BALL_MAX_WEIGHT_DELTA = 0.5
 
 data class Ball(
     val x: Int = 0,
@@ -111,8 +111,8 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 }
 
 fun Ball.isCollidingWithBrick(brick: Brick): Collision {
-    val horCollision = checkBrickHorizontalCollision(this, brick)
-    val verCollision = checkBrickVerticalCollision(this, brick)
+    val horCollision = checkBrickHorizontalCollision(ball = this, brick)
+    val verCollision = checkBrickVerticalCollision(ball = this, brick)
 
     return when {
         horCollision != Collision.NONE && verCollision == Collision.NONE -> Collision.HORIZONTAL

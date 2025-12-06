@@ -8,27 +8,39 @@ import pt.isel.canvas.GREEN
 import pt.isel.canvas.MAGENTA
 import pt.isel.canvas.YELLOW
 
-enum class GiftType(val letter: String, val color: Int) {
+const val GIFT_GLUE_USECOUNT = 3
+
+enum class GiftType(val letter: String, val color: Int, val useCount: Int = 0) {
     EXTENDED(letter = "E", color = GREEN),
     BALLS(letter = "B", color = YELLOW),
     SLOW(letter = "S", color = BLUE),
     FAST(letter = "F", color = CYAN),
-    GLUE(letter = "G", color = MAGENTA),
+    GLUE(letter = "G", color = MAGENTA, useCount = GIFT_GLUE_USECOUNT),
     CANCEL(letter = "C", color = ORANGE_COLOR)
 }
 
-data class Gift(val x: Int = 0, val y: Int = 0, val deltaY: Int = 1, val type: GiftType, val active: Boolean = false)
+fun GiftType.isGlue() = this == GiftType.GLUE
+
+data class Gift(
+    val x: Int = 0,
+    val y: Int = 0,
+    val deltaY: Int = 1,
+    val type: GiftType,
+    val active: Boolean = false,
+    val useCount: Int = GIFT_GLUE_USECOUNT
+)
 
 fun Gift.isOutOfBounds() = this.y > HEIGHT
 
 fun Gift.isCollidingWithRacket(racket: Racket) =
-    (this.x + GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width) &&
+    ((this.x + GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width) ||
+        (this.x - GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width)) &&
             (this.y + GIFT_CIRCLE_RADIUS in racket.y..racket.y + RACKET_HEIGHT)
 
 
 fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
-    val availableGifts = GiftType.entries + GiftType.entries + GiftType.entries + GiftType.entries
-
+    val availableGifts =
+        GiftType.entries + GiftType.entries + GiftType.entries + GiftType.entries + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL + GiftType.CANCEL
     val bricksMutableList = bricks.toMutableList()
 
     availableGifts.forEach {
@@ -41,7 +53,7 @@ fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
     return bricksMutableList.toList()
 }
 
-fun chooseGiftAction(gift: Gift, game: Game): Game {
+fun chooseGiftAction(gift: Gift, game: Game):Game {
     val giftedRacket = when (gift.type) {
         GiftType.EXTENDED -> game.racket.setExtended()
         GiftType.GLUE -> game.racket.toggleStickiness()

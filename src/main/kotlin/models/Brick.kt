@@ -68,8 +68,8 @@ fun checkBrickVerticalCollision(ball: Ball, brick: Brick): Collision {
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
     // ponto mais próximo dentro do retângulo
-    val nearestX = ball.x.coerceIn(brick.x, brick.x + BRICK_WIDTH)
-    val nearestY = ball.y.coerceIn(brick.y, brick.y + BRICK_HEIGHT)
+    val nearestX = ball.horizontalMovement().coerceIn(brick.x, brick.x + BRICK_WIDTH)
+    val nearestY = ball.verticalMovement().coerceIn(brick.y, brick.y + BRICK_HEIGHT)
 
     // diferença até ao centro da bola
     val dx = ball.horizontalMovement() - nearestX

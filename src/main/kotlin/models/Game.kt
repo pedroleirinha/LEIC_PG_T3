@@ -47,11 +47,19 @@ val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 fun Game.loseLife() = copy(lives = lives - 1)
 fun Game.newBall() = copy(balls = listOf(generateNewBall(this.racket)))
 
-fun unstuckBalls(game: Game) = game.copy(balls = game.balls.map {
-    if (it.stuck) {
-        it.copy(stuck = false)
-    } else it
-})
+fun unstuckBalls(game: Game) =
+    game.copy(
+        balls = game.balls.map {
+            if (it.stuck) {
+                it.copy(stuck = false)
+            } else it
+        },
+        activeGifts = game.activeGifts.map {
+            if (it.type == GiftType.GLUE)
+                it.copy(useCount = it.useCount - 1)
+            else it
+        }
+    )
 
 fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
     val updatedRacket = game.racket.moveTo(to = mouseX)
@@ -68,7 +76,7 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
-                checkBrickCollision(it,brick) != Collision.NONE
+                checkBrickCollision(it, brick) != Collision.NONE
             })
             brick.addHit()
         else

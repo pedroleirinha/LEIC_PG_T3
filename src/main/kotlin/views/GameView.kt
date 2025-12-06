@@ -91,43 +91,40 @@ fun handleGameBricks(game: Game): Game {
     return game.copy(bricks = bricks, balls = updatedBalls, points = game.points + points)
 }
 
-fun handleGifts(game: Game): Game {
+fun handleGifts(game: Game):Game{
     val newActiveGifts: List<Gift> = game.bricks
-        .filter { it.hitCounter == it.type.hits && it.gift != null }
+        .filter { it.hitCounter == it.type.hits && it.gift != null}
         .map { it.gift as Gift } + game.giftsOnScreen
 
     val newGiftsPosition = updateGiftsIconMovement(newActiveGifts)
     val caughtGifts = newGiftsPosition.filter { it.isCollidingWithRacket(game.racket) }
     val uncaughtGifts = clearGiftsCaught(gifts = newGiftsPosition, game.racket)
 
-    return game.copy(activeGifts = caughtGifts, giftsOnScreen = uncaughtGifts)
+    return game.copy(activeGifts = game.activeGifts + caughtGifts, giftsOnScreen = uncaughtGifts)
 }
 
-
-fun clearGiftsCaught(gifts: List<Gift>, racket: Racket): List<Gift> {
-    return gifts.filter { !it.isCollidingWithRacket(racket) }
-}
-
-fun updateGiftsIconMovement(gifts: List<Gift>): List<Gift> {
-    return gifts.map { it.copy(y = it.y + it.deltaY) }.filter { !it.isOutOfBounds() }
-}
+fun clearGiftsCaught(gifts: List<Gift>, racket: Racket) = gifts.filter { !it.isCollidingWithRacket(racket) }
+fun updateGiftsIconMovement(gifts: List<Gift>) = gifts.map { it.copy(y = it.y + it.deltaY) }.filter { !it.isOutOfBounds() }
 
 fun Game.handleActiveGifts(): Game {
     var newUpdatedGame = this
 
-    val gifts = this.activeGifts.filter { !it.active }.map {
-        newUpdatedGame = chooseGiftAction(it, this)
-        println("action fired $it")
-        it.copy(active = true)
+    val gifts = this.activeGifts.map {
+        if(!it.active){
+            newUpdatedGame = chooseGiftAction(it, newUpdatedGame)
+            println("action fired $it")
+            it.copy(active = true)
+        }else it
     }
-    return newUpdatedGame.copy(activeGifts = gifts)
+    val finishedGifts = gifts.filter { it.type.useCount != 0 }
+    return newUpdatedGame.copy(activeGifts = finishedGifts)
 }
 
 /*
 * If there are not bricks, other than INDESTRUCTIBLE, left than the game ends
 * */
 fun Game.isGameOver() = (
-        this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
+            this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
         ) || (this.balls.isEmpty() && this.lives == 0)
 
 /*
@@ -146,7 +143,12 @@ fun drawGamePoints(points: Int) {
 * Desenha o jogo no canvas, que inclui desenhar a raquete, bolas e o contador de bolas em jogo
 * */
 fun drawGame(game: Game) {
-    drawRacket(racket = game.racket)
+
+    val glueCounter = game.activeGifts
+        .filter { it.type == GiftType.GLUE }
+        .fold(0) { sum, elem -> sum + elem.useCount}
+
+    drawRacket(racket = game.racket, glueCounter)
     drawBalls(ballsList = game.balls)
     drawGamePoints(points = game.points)
     drawBricks(bricks = game.bricks)
