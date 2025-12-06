@@ -16,6 +16,7 @@ const val KEY_D_CODE = 68
 const val KEY_F_CODE = 70
 const val KEY_X_CODE = 88
 const val KEY_E_CODE = 69
+const val KEY_C_CODE = 67
 
 enum class Collision {
     HORIZONTAL,
@@ -36,7 +37,7 @@ data class Game(
     val racket: Racket = Racket(),
     val bricks: List<Brick> = emptyList(),
     val points: Int = 0,
-    val lives: Int = 2,
+    val lives: Int = 5,
     val giftsOnScreen: List<Gift> = listOf(),
     val activeGifts: List<Gift> = listOf()
 )
@@ -44,7 +45,6 @@ data class Game(
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 
 fun Game.loseLife() = copy(lives = lives - 1)
-
 fun Game.newBall() = copy(balls = listOf(generateNewBall(this.racket)))
 
 fun unstuckBalls(game: Game) = game.copy(balls = game.balls.map {

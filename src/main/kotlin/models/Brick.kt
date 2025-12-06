@@ -31,13 +31,15 @@ enum class BrickType(val points: Int, val hits: Int, val color: Int) {
     EMPTY(points = 0, hits = INDESTRUCTIBLE, color = BLACK),
 }
 
-data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0,val gift: Gift? = null)
+data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0, val gift: Gift? = null)
 
 fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
 
 
 fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
-    if (ball.y + BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT) {
+    if ((ball.y + BALL_RADIUS + abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT)
+        && (ball.y - BALL_RADIUS - abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT)
+    ) {
         if (ball.x + BALL_RADIUS + abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH) {
             return Collision.HORIZONTAL
         } else if (ball.x - BALL_RADIUS - abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH) {
@@ -48,7 +50,9 @@ fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
 }
 
 fun checkBrickVerticalCollision(ball: Ball, brick: Brick): Collision {
-    if (ball.x + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH) {
+    if ((ball.x + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH)
+        && (ball.x - BALL_RADIUS - abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH)
+    ) {
         if (ball.y + BALL_RADIUS + abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT) {
             return Collision.VERTICAL
         } else if (ball.y - BALL_RADIUS - abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT) {
@@ -60,7 +64,7 @@ fun checkBrickVerticalCollision(ball: Ball, brick: Brick): Collision {
 
 /*
 * IMPROVE ON IT
-* */
+**/
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
     // ponto mais próximo dentro do retângulo
@@ -68,8 +72,8 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     val nearestY = ball.y.coerceIn(brick.y, brick.y + BRICK_HEIGHT)
 
     // diferença até ao centro da bola
-    val dx = ball.x - nearestX
-    val dy = ball.y - nearestY
+    val dx = ball.horizontalMovement() - nearestX
+    val dy = ball.verticalMovement() - nearestY
 
     // se distância < raio → colisão
     if (dx * dx + dy * dy <= BALL_RADIUS * BALL_RADIUS) {

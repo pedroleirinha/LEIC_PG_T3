@@ -47,12 +47,12 @@ fun checkRacketCollisionPosition(ball: Ball, racket: Racket) = when {
 
 fun Racket.toggleStickiness() = this.copy(sticky = !this.sticky)
 fun Racket.toggleExtendiness() = this.copy(
-    width = width + if(!this.extended) 30 else -30,
+    width = RACKET_INITIAL_WIDTH + if(!this.extended) 30 else 0,
     extended = !this.extended
 )
 
 fun Racket.setExtended() = this.copy(
-    width = width + 30,
+    width = RACKET_INITIAL_WIDTH + 30,
     extended = true
 )
 
