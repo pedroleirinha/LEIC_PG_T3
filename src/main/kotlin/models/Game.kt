@@ -9,7 +9,6 @@ const val BACKGROUND_COLOR = BLACK
 const val LIVES_Y_POSITION = HEIGHT - 20
 const val LIVES_X_SPACE = (BALL_RADIUS * 3)
 const val TIME_TICK_MLS = 10
-const val KEY_S_CODE = 83
 
 enum class Collision {
     HORIZONTAL,

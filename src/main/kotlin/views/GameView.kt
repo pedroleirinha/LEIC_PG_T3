@@ -33,7 +33,7 @@ fun gameStart() {
     }
 
     arena.onKeyPressed {
-        if (it.code == ESCAPE_CODE) arena.close();
+        if (it.code == ESCAPE_CODE) arena.close()
     }
 }
 
