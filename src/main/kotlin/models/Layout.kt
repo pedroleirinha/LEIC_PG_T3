@@ -1,21 +1,18 @@
 package org.example.models
 
-data class BricksRow(val bricks: List<BrickType>)
-data class BricksColumn(val rows: List<BricksRow>)
+val basicTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
 
-val singleHitBrickTypes = BrickType.entries.filter { it.hits == SINGLE_HIT }
-
-val allColors: BricksColumn = BricksColumn(singleHitBrickTypes.map { BricksRow(listOf(it, it, it)) })
+val allColors: BricksColumn = BricksColumn(basicTypes.map { BricksRow(listOf(it, it, it)) })
 val middleColors: BricksColumn = BricksColumn(
     rows = listOf(
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.WHITE, BrickType.GOLD, BrickType.WHITE, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.ORANGE, BrickType.ORANGE, BrickType.ORANGE, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.CYAN, BrickType.CYAN, BrickType.CYAN, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.GREEN, BrickType.GREEN, BrickType.GREEN, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.RED, BrickType.RED, BrickType.RED, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.BLUE, BrickType.BLUE, BrickType.BLUE, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.SILVER, BrickType.SILVER, BrickType.SILVER, BrickType.EMPTY)),
+        BricksRow(bricks = listOf(BrickType.WHITE, BrickType.GOLD, BrickType.WHITE)),
+        BricksRow(bricks = listOf(BrickType.ORANGE, BrickType.ORANGE, BrickType.ORANGE)),
+        BricksRow(bricks = listOf(BrickType.CYAN, BrickType.CYAN, BrickType.CYAN)),
+        BricksRow(bricks = listOf(BrickType.GREEN, BrickType.GREEN, BrickType.GREEN)),
+        BricksRow(bricks = listOf(BrickType.RED, BrickType.RED, BrickType.RED)),
+        BricksRow(bricks = listOf(BrickType.BLUE, BrickType.BLUE, BrickType.BLUE)),
+        BricksRow(bricks = listOf(BrickType.MAGENTA, BrickType.MAGENTA, BrickType.MAGENTA)),
+        BricksRow(bricks = listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
     )
 )
 
@@ -90,7 +87,7 @@ fun generateWallBricks(): List<Brick> {
     return lista
 }
 
-fun createInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
+fun generateInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
     var lista: List<Brick> = emptyList()
     var brickY = TopMarginBricks
     var brickX = 0
@@ -100,20 +97,18 @@ fun createInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
     for (column in layout) {
         column.rows.forEach {
             columnSize = it.bricks.size
-
             it.bricks.forEach {
                 brickX += BRICK_WIDTH
-                lista = lista + Brick(x = brickX, y = brickY, type = it)
+                lista = lista + Brick(brickX, brickY, it)
             }
             brickY += BRICK_HEIGHT
             brickX = initialX
         }
-        initialX += BRICK_WIDTH * (columnSize)
+        initialX += BRICK_WIDTH * (columnSize + 1)
         brickX = initialX
         brickY = TopMarginBricks
     }
 
-    lista = generateGifsInRandomBricks(bricks = lista)
-    return lista.excludingEmpty()
+    return lista
 }
 

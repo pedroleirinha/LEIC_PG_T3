@@ -28,21 +28,21 @@ enum class BrickType(val points: Int, val hits: Int, val color: Int) {
     WHITE(points = 1, hits = SINGLE_HIT, color = pt.isel.canvas.WHITE),
     SILVER(points = 0, hits = DOUBLE_HIT, color = SILVER_COLOR),
     GOLD(points = 0, hits = INDESTRUCTIBLE, color = GOLD_COLOR),
-    EMPTY(points = 0, hits = INDESTRUCTIBLE, color = BLACK),
+    EMPTY(points = 0, hits = 0, color = BLACK),
 }
 
-data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0, val gift: Gift? = null)
+data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0)
 
-fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
+data class BricksRow(val bricks: List<BrickType>)
+
+data class BricksColumn(val rows: List<BricksRow>)
 
 
 fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
-    if ((ball.verticalMovement() + BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT)
-        || (ball.verticalMovement() - BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT)
-    ) {
-        if (ball.horizontalMovement() + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH) {
+    if (ball.y + BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT) {
+        if (ball.x + BALL_RADIUS + abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH) {
             return Collision.HORIZONTAL
-        } else if (ball.horizontalMovement() - BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH) {
+        } else if (ball.x - BALL_RADIUS - abs(ball.deltaX) in brick.x..brick.x + BRICK_WIDTH) {
             return Collision.HORIZONTAL
         }
     }
@@ -50,12 +50,10 @@ fun checkBrickHorizontalCollision(ball: Ball, brick: Brick): Collision {
 }
 
 fun checkBrickVerticalCollision(ball: Ball, brick: Brick): Collision {
-    if ((ball.horizontalMovement() + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH)
-        || (ball.horizontalMovement() - BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH)
-    ) {
-        if (ball.verticalMovement() + BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT) {
+    if (ball.x + BALL_RADIUS in brick.x..brick.x + BRICK_WIDTH) {
+        if (ball.y + BALL_RADIUS + abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT) {
             return Collision.VERTICAL
-        } else if (ball.verticalMovement() - BALL_RADIUS in brick.y..brick.y + BRICK_HEIGHT) {
+        } else if (ball.y - BALL_RADIUS - abs(ball.deltaY) in brick.y..brick.y + BRICK_HEIGHT) {
             return Collision.VERTICAL
         }
     }
@@ -64,16 +62,16 @@ fun checkBrickVerticalCollision(ball: Ball, brick: Brick): Collision {
 
 /*
 * IMPROVE ON IT
-**/
+* */
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
     // ponto mais próximo dentro do retângulo
-    val nearestX = ball.horizontalMovement().coerceIn(brick.x, brick.x + BRICK_WIDTH)
-    val nearestY = ball.verticalMovement().coerceIn(brick.y, brick.y + BRICK_HEIGHT)
+    val nearestX = ball.x.coerceIn(brick.x, brick.x + BRICK_WIDTH)
+    val nearestY = ball.y.coerceIn(brick.y, brick.y + BRICK_HEIGHT)
 
     // diferença até ao centro da bola
-    val dx = ball.horizontalMovement() - nearestX
-    val dy = ball.verticalMovement() - nearestY
+    val dx = ball.x - nearestX
+    val dy = ball.y - nearestY
 
     // se distância < raio → colisão
     if (dx * dx + dy * dy <= BALL_RADIUS * BALL_RADIUS) {

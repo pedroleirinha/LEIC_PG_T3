@@ -27,27 +27,5 @@ fun drawBricks(bricks: List<Brick>) {
             color = BLACK,
             thickness = 2
         )
-
-        if (it.gift != null) {
-            if(runningENVIRONMENT == ENVIRONMENT.DEBUG){
-                arena.drawText(
-                    x = it.x + BRICK_WIDTH / 2 - 4,
-                    y = it.y + BRICK_HEIGHT - 4,
-                    txt = it.gift.type.letter,
-                    color = BLACK,
-                    fontSize = 10
-                )
-            }
-           /* val giftSideWidth = 4
-            arena.drawRect(
-                x = it.x + BRICK_WIDTH / 2,
-                y = it.y + BRICK_HEIGHT / 2 - 3,
-                width = giftSideWidth,
-                height = giftSideWidth,
-                color = it.gift.type.color,
-            )*/
-
-        }
-
     }
 }

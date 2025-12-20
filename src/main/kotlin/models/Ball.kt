@@ -5,9 +5,6 @@ import org.example.runningENVIRONMENT
 import org.example.views.RACKET_DEFAULT_Y_CORD
 import org.example.views.RACKET_HEIGHT
 import pt.isel.canvas.CYAN
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlin.math.sign
 
 const val BALL_COUNT_FONTSIZE = 30
@@ -17,16 +14,12 @@ const val BALL_COLOR = CYAN
 const val MAX_DELTA_X = 6
 const val MAX_DELTA_Y = 4
 const val INITIAL_DELTA_Y = 2
-const val BALL_MAX_WEIGHT = 1.5
-const val BALL_MIN_WEIGHT = 0.5
-const val BALL_MAX_WEIGHT_DELTA = 0.5
 
 data class Ball(
     val x: Int = 0,
     val y: Int = 0,
     val deltaX: Int = 0,
     val deltaY: Int = 0,
-    val weight: Double = 1.0,
     val stuck: Boolean = true
 )
 
@@ -45,48 +38,15 @@ fun generateNewBall(racket: Racket): Ball {
     return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = -yDelta)
 }
 
-fun Ball.slowVelocity() = copy(weight = max(weight - BALL_MAX_WEIGHT_DELTA, BALL_MIN_WEIGHT))
-fun Ball.upVelocity() = copy(weight = min(weight + BALL_MAX_WEIGHT_DELTA, BALL_MAX_WEIGHT))
-
-/*
-* Gera uma nova bola com movimentos horizontais e com velocidades verticais diferentes.
-* A nova bola está sempre a movimentar-se para cima
-* */
-fun generateNewBallFromPosition(xCord: Int, yCord: Int): Ball {
-    val xDelta = (-MAX_DELTA_X..MAX_DELTA_X).random()
-    val yDelta = (1..MAX_DELTA_Y).random()
-
-
-    return Ball(x = xCord, y = yCord, deltaX = xDelta, deltaY = yDelta, stuck = false)
-}
-
-
-/*
-* Cria uma bola fazendo uma cópia e atualizando apenas as coords
-* */
-fun Ball.move() =
-    if (!this.stuck) copy(x = this.horizontalMovement(), y = this.verticalMovement()) else this
-
-
-fun ballMovementCalc(n: Int, delta: Int, weight: Double) =
-    (n + (delta * weight)).roundToInt()
-
-fun Ball.horizontalMovement() =
-    ballMovementCalc(this.x, this.deltaX, this.weight)
-
-
-fun Ball.verticalMovement() =
-    ballMovementCalc(this.y, this.deltaY, this.weight)
-
 /*
 * Deteta se ha colisão com a racket retorna um enumerado conforme a colisão detetada
 * */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     val horizontalCollision = (
-            horizontalMovement() + BALL_RADIUS in racket.x..(racket.x + racket.width) ||
-            horizontalMovement() - BALL_RADIUS in racket.x..(racket.x + racket.width)
+            this.x + BALL_RADIUS in racket.x..(racket.x + racket.width) ||
+                    this.x - BALL_RADIUS in racket.x..(racket.x + racket.width)
             )
-    val verticalCollision = (verticalMovement() + BALL_RADIUS) in racket.y..(racket.y + RACKET_HEIGHT)
+    val verticalCollision = (this.y + BALL_RADIUS) in racket.y..(racket.y + RACKET_HEIGHT)
 
     return when {
         horizontalCollision && verticalCollision && this.deltaY.sign == DIRECTIONS.DOWN.value -> Collision.BOTH
@@ -99,7 +59,7 @@ fun Ball.isCollidingWithRacket(racket: Racket): Collision {
 
 fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
     for (brick in bricks) {
-        val res = this.isCollidingWithBrick(brick)
+        val res = checkBrickCollision(this, brick)
         if (res != Collision.NONE) {
             println("$res -> $this -> $brick")
             return res
@@ -111,10 +71,8 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 }
 
 fun Ball.isCollidingWithBrick(brick: Brick): Collision {
-    val horCollision = checkBrickHorizontalCollision(ball = this, brick)
-    val verCollision = checkBrickVerticalCollision(ball = this, brick)
-
-
+    val horCollision = checkBrickHorizontalCollision(this, brick)
+    val verCollision = checkBrickVerticalCollision(this, brick)
 
     return when {
         horCollision != Collision.NONE && verCollision == Collision.NONE -> Collision.HORIZONTAL
@@ -125,14 +83,17 @@ fun Ball.isCollidingWithBrick(brick: Brick): Collision {
 }
 
 /*
+* Cria uma bola fazendo uma cópia e atualizando apenas as coords
+* */
+fun Ball.move() = if (!this.stuck) copy(x = this.x + this.deltaX, y = this.y + deltaY) else this
+
+/*
 * Verifica se uma bola está em colisão com a arena, tanto na horizontal e vertical
 * Retorna um objeto do tipo Collision
 * */
 fun Ball.isCollidingWithArea() = when {
-    this.horizontalMovement() - BALL_RADIUS <= 0 ||
-            this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
-
-    this.verticalMovement() - BALL_RADIUS <= 0 || (this.verticalMovement() + BALL_RADIUS >= HEIGHT &&
+    this.x - BALL_RADIUS <= 0 || this.x + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
+    this.y - BALL_RADIUS <= 0 || (this.y + BALL_RADIUS >= HEIGHT &&
             (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
         -> Collision.VERTICAL
 

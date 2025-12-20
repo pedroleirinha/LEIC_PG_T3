@@ -8,16 +8,12 @@ import pt.isel.canvas.YELLOW
 
 fun gameStart() {
     val racket = Racket()
-    var game = Game(
-        racket = racket,
-        bricks = createInitialBricksLayout(portugalBricksLayout),
-        balls = listOf(generateNewBall(racket))
-    )
+    var game = Game(racket = racket,bricks = generateInitialBricksLayout(bricksLayout), balls = listOf(generateNewBall(racket)))
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
 
-        if (!game.isGameOver()) game = game.progressGame() else drawFinishText()
+        if(!game.isGameOver()) game = game.progressGame() else drawFinishText()
         drawGame(game)
     }
 
@@ -27,10 +23,10 @@ fun gameStart() {
 
     arena.onMouseDown { me ->
         if (me.down) {
-            if (game.balls.isEmpty() && game.lives > 0) {
+            if(game.balls.isEmpty() &&  game.lives > 0){
                 game = game.newBall()
                 game = game.loseLife()
-            } else {
+            }else{
                 game = unstuckBalls(game)
             }
         }
@@ -38,39 +34,30 @@ fun gameStart() {
 
     arena.onKeyPressed {
         if (it.code == ESCAPE_CODE) arena.close()
-        if (it.code == KEY_X_CODE) {
+        if (it.code == KEY_S_CODE) {
             game = game.copy(racket = game.racket.toggleStickiness())
             println("sticky ${game.racket.sticky}")
         }
-
-        if (it.code == KEY_F_CODE) {
-            game = game.copy(balls = giftFastBalls(game.balls))
-            println("fast balls ${game.balls.first().weight}")
-        }
-
-        if (it.code == KEY_S_CODE) {
-            game = game.copy(balls = giftSlowBalls(game.balls))
-            println("slow balls ${game.balls.first().weight}")
-        }
-
-        if (it.code == KEY_D_CODE) {
-            game = game.copy(balls = giftDuplicateBall(game.balls))
-            println("duplicate balls")
-        }
-
-        if (it.code == KEY_E_CODE) {
-            game = game.copy(racket = giftExtendedRacket(game.racket))
-            println("extended racket")
-        }
-
-        if (it.code == KEY_C_CODE) {
-            game = giftCancelEffects(game)
-            println("cancel")
-        }
-
     }
 }
 
+
+fun Game.progressGame(): Game {
+    val bricks = clearBrokenBricks(this.bricks, this.balls)
+    val points = sumPoints(bricks)
+    val updatedBalls = handleGameBallsBehaviour(balls = this.balls, racket = this.racket, bricks = this.bricks)
+
+    val filteredBricks = bricks.filter { !it.isBroken() }
+
+    return copy(bricks = filteredBricks, balls = updatedBalls, points = this.points + points)
+}
+
+/*
+* If there are not bricks, other than INDESTRUCTIBLE, left than the game ends
+* */
+fun Game.isGameOver() = (
+            this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
+        ) || (this.balls.isEmpty() && this.lives == 0)
 
 /*
 * Desenha no canvas o número de pontos adquiridos durante o jogo no momento*/
@@ -88,27 +75,17 @@ fun drawGamePoints(points: Int) {
 * Desenha o jogo no canvas, que inclui desenhar a raquete, bolas e o contador de bolas em jogo
 * */
 fun drawGame(game: Game) {
-
-    val glueCounter = game.activeGifts
-        .filter { it.type == GiftType.GLUE }
-        .fold(0) { sum, elem -> sum + elem.useCount }
-
-    drawRacket(racket = game.racket, glueCounter)
+    drawRacket(racket = game.racket)
     drawBalls(ballsList = game.balls)
-    drawGamePoints(points = game.points)
+    drawGamePoints(game.points)
     drawBricks(bricks = game.bricks)
     drawLives(lives = game.lives)
-    drawActiveGifts(activeGifts = game.giftsOnScreen)
-}
-
-fun drawActiveGifts(activeGifts: List<Gift>) {
-    activeGifts.forEach { it.drawGift() }
 }
 
 fun drawLives(lives: Int) {
     drawBalls(generateLives(lives))
 }
 
-fun drawFinishText() {
-    arena.drawText(WIDTH - 100, LIVES_Y_POSITION, "FINISHED!", YELLOW, 16)
+fun drawFinishText(){
+    arena.drawText(WIDTH-100,LIVES_Y_POSITION, "FINISHED!", YELLOW,16)
 }
