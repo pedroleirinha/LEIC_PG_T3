@@ -1,7 +1,5 @@
 package org.example.models
 
-import org.example.ENVIRONMENT
-import org.example.runningENVIRONMENT
 import org.example.views.RACKET_DEFAULT_Y_CORD
 import org.example.views.RACKET_HEIGHT
 import pt.isel.canvas.CYAN
@@ -12,7 +10,6 @@ const val BALL_COUNTER_YCORD = 585
 const val BALL_RADIUS = 7
 const val BALL_COLOR = CYAN
 const val MAX_DELTA_X = 6
-const val MAX_DELTA_Y = 4
 const val INITIAL_DELTA_Y = 2
 
 data class Ball(
@@ -93,9 +90,7 @@ fun Ball.move() = if (!this.stuck) copy(x = this.x + this.deltaX, y = this.y + d
 * */
 fun Ball.isCollidingWithArea() = when {
     this.x - BALL_RADIUS <= 0 || this.x + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
-    this.y - BALL_RADIUS <= 0 || (this.y + BALL_RADIUS >= HEIGHT &&
-            (runningENVIRONMENT == ENVIRONMENT.DEBUG && this.deltaY.sign != DIRECTIONS.UP.value))// && this.deltaY.sign == DIRECTIONS.UP.value
-        -> Collision.VERTICAL
+    this.y - BALL_RADIUS <= 0 -> Collision.VERTICAL
 
     else -> Collision.NONE
 }

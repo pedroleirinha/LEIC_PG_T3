@@ -1,12 +1,10 @@
 package org.example.views
 
-import org.example.ENVIRONMENT
 import org.example.models.BRICK_HEIGHT
 import org.example.models.BRICK_STROKE_OFFSET_ADJUSTMENT
 import org.example.models.BRICK_WIDTH
 import org.example.models.Brick
 import org.example.models.arena
-import org.example.runningENVIRONMENT
 import pt.isel.canvas.BLACK
 
 

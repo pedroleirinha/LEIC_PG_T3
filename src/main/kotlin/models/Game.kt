@@ -1,7 +1,5 @@
 package org.example.models
 
-import org.example.ENVIRONMENT
-import org.example.runningENVIRONMENT
 import pt.isel.canvas.BLACK
 import pt.isel.canvas.Canvas
 
@@ -30,14 +28,14 @@ data class Game(
     val area: Area = Area(),
     val balls: List<Ball> = emptyList(),
     val racket: Racket = Racket(),
-    val bricks: List<Brick> = emptyList(),
+    val bricks: List<Brick> = generateInitialBricksLayout(bricksLayout),
     val points: Int = 0,
-    val lives: Int = 2
+    val lives: Int = 5
 )
 
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 
-fun Game.loseLife() = copy(lives=lives-1)
+fun Game.loseLife() = copy(lives = lives - 1)
 
 fun Game.newBall() = copy(balls = listOf(generateNewBall(this.racket)))
 
@@ -59,6 +57,7 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 
     return game.copy(balls = newBalls, racket = updatedRacket)
 }
+
 fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
@@ -74,6 +73,7 @@ fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     }
     return newBricks
 }
+
 fun sumPoints(bricks: List<Brick>) =
     bricks
         .filter { it.hitCounter > 0 }
@@ -86,7 +86,7 @@ fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket, bricks: List<Bri
 
     val filteredBalls = filterBallsOutOfBounds(balls = balls)
     val newBallsUpdated =
-        (if (runningENVIRONMENT == ENVIRONMENT.DEBUG) balls else filteredBalls).map {
+        filteredBalls.map {
             checkAndUpdateBallMovementAfterCollision(
                 ball = it,
                 racket = racket,

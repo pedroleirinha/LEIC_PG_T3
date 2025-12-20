@@ -8,12 +8,12 @@ import pt.isel.canvas.YELLOW
 
 fun gameStart() {
     val racket = Racket()
-    var game = Game(racket = racket,bricks = generateInitialBricksLayout(bricksLayout), balls = listOf(generateNewBall(racket)))
+    var game = Game(balls = listOf(generateNewBall(racket)))
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
         arena.erase()
 
-        if(!game.isGameOver()) game = game.progressGame() else drawFinishText()
+        if (!game.isGameOver()) game = game.progressGame() else drawFinishText()
         drawGame(game)
     }
 
@@ -23,21 +23,17 @@ fun gameStart() {
 
     arena.onMouseDown { me ->
         if (me.down) {
-            if(game.balls.isEmpty() &&  game.lives > 0){
+            if (game.balls.isEmpty() && game.lives > 0) {
                 game = game.newBall()
                 game = game.loseLife()
-            }else{
+            } else {
                 game = unstuckBalls(game)
             }
         }
     }
 
     arena.onKeyPressed {
-        if (it.code == ESCAPE_CODE) arena.close()
-        if (it.code == KEY_S_CODE) {
-            game = game.copy(racket = game.racket.toggleStickiness())
-            println("sticky ${game.racket.sticky}")
-        }
+        if (it.code == ESCAPE_CODE) arena.close();
     }
 }
 
@@ -56,7 +52,7 @@ fun Game.progressGame(): Game {
 * If there are not bricks, other than INDESTRUCTIBLE, left than the game ends
 * */
 fun Game.isGameOver() = (
-            this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
+        this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
         ) || (this.balls.isEmpty() && this.lives == 0)
 
 /*
@@ -86,6 +82,6 @@ fun drawLives(lives: Int) {
     drawBalls(generateLives(lives))
 }
 
-fun drawFinishText(){
-    arena.drawText(WIDTH-100,LIVES_Y_POSITION, "FINISHED!", YELLOW,16)
+fun drawFinishText() {
+    arena.drawText(WIDTH - 100, LIVES_Y_POSITION, "FINISHED!", YELLOW, 16)
 }
