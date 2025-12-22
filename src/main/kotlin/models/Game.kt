@@ -60,10 +60,7 @@ fun adjustHorizontalCordForStuckBall(game: Game, mouseX: Int): Game {
 fun clearBrokenBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick> {
     val newBricks = bricks.map { brick ->
         if (balls.any {
-                checkBrickCollision(
-                    it,
-                    brick
-                ) != Collision.NONE
+                checkBrickCollision(ball = it, brick) != Collision.NONE
             })
             brick.addHit()
         else
@@ -79,7 +76,7 @@ fun sumPoints(bricks: List<Brick>) =
         .fold(0) { sum, brick -> sum + brick.type.points * brick.hitCounter }
 
 /*
-* A cada step do jogo, remove as bolas fora de jogo, verifica as colisões e atualiza os movimentos das bolas para serem desenhadas novamente.
+* A cada "step" do jogo, remove as bolas fora de jogo, verifica as colisões e atualiza os movimentos das bolas para serem desenhadas novamente.
 * */
 fun handleGameBallsBehaviour(balls: List<Ball>, racket: Racket, bricks: List<Brick>): List<Ball> {
 

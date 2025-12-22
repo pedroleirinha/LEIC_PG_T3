@@ -26,29 +26,6 @@ const val RACKET_TOP_LAYER_HEIGHT = 5
 const val RACKET_BASE_COLOR = WHITE
 const val RACKET_EDGES_COLOR = RED
 
-fun adjustSizeIfExtended(racket: Racket, width: Int):Int {
-    return if(racket.extended) width + 30 else width
-}
-
-fun drawRacketGlueSection(racket: Racket, useCount: Int = 0) {
-    val offset = 20
-    arena.drawRect(
-        x = racket.x + racket.width / 6,
-        y = racket.y + RACKET_TOP_LAYER_HEIGHT,
-        width = racket.width - offset,
-        height = RACKET_HEIGHT - RACKET_TOP_LAYER_HEIGHT,
-        color = CYAN
-    )
-
-    arena.drawText(
-        x = racket.x + (racket.width / 2),
-        y = racket.y + RACKET_TOP_LAYER_HEIGHT * 2,
-        txt = "$useCount",
-        color = BLACK,
-        fontSize = 8
-    )
-}
-
 fun drawRacketBottomLayer(racket: Racket) {
     arena.drawRect(
         x = racket.x,
@@ -100,7 +77,7 @@ fun drawRacketCenter(racket: Racket) {
     arena.drawRect(
         x = racket.x + RACKET_EDGE_ZONE + RACKET_MIDDLE_ZONE,
         y = racket.y,
-        width = adjustSizeIfExtended(racket, RACKET_CENTRAL_ZONE),
+        width = RACKET_CENTRAL_ZONE,
         height = RACKET_TOP_LAYER_HEIGHT,
         color = RACKET_BASE_COLOR
     )
@@ -115,5 +92,4 @@ fun drawRacketTopLayer(racket: Racket) {
 fun drawRacket(racket: Racket, glueCount: Int = 0) {
     drawRacketBottomLayer(racket)
     drawRacketTopLayer(racket)
-    if(glueCount > 0) drawRacketGlueSection(racket, glueCount)
 }

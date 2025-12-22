@@ -63,20 +63,7 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
         }
     }
 
-
     return Collision.NONE
-}
-
-fun Ball.isCollidingWithBrick(brick: Brick): Collision {
-    val horCollision = checkBrickHorizontalCollision(this, brick)
-    val verCollision = checkBrickVerticalCollision(this, brick)
-
-    return when {
-        horCollision != Collision.NONE && verCollision == Collision.NONE -> Collision.HORIZONTAL
-        verCollision != Collision.NONE && horCollision == Collision.NONE -> Collision.VERTICAL
-        horCollision != Collision.NONE && verCollision != Collision.NONE -> Collision.BOTH
-        else -> Collision.NONE
-    }
 }
 
 /*
@@ -120,13 +107,11 @@ fun updateBallAfterCollisionArea(ball: Ball, areaCollision: Collision): Ball {
 
 /*
 * Atualiza o deltaX e deltaY da bola dependendo da colisão detetada com a Area de jogo*/
-fun updateBallAfterCollisionBrick(ball: Ball, brickCollision: Collision): Ball {
-    return when {
-        brickCollision == Collision.BOTH -> ball.copy(deltaX = -ball.deltaX, deltaY = -ball.deltaY)
-        brickCollision == Collision.HORIZONTAL -> ball.copy(deltaX = -ball.deltaX)
-        brickCollision == Collision.VERTICAL -> ball.copy(deltaY = -ball.deltaY)
-        else -> ball
-    }
+fun updateBallAfterCollisionBrick(ball: Ball, brickCollision: Collision): Ball = when {
+    brickCollision == Collision.BOTH -> ball.copy(deltaX = -ball.deltaX, deltaY = -ball.deltaY)
+    brickCollision == Collision.HORIZONTAL -> ball.copy(deltaX = -ball.deltaX)
+    brickCollision == Collision.VERTICAL -> ball.copy(deltaY = -ball.deltaY)
+    else -> ball
 }
 
 
