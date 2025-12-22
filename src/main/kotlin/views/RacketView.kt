@@ -4,9 +4,6 @@ package org.example.views
 import org.example.models.Racket
 import org.example.models.WIDTH
 import org.example.models.arena
-import pt.isel.canvas.BLACK
-import pt.isel.canvas.BLUE
-import pt.isel.canvas.CYAN
 import pt.isel.canvas.RED
 import pt.isel.canvas.WHITE
 
@@ -89,7 +86,7 @@ fun drawRacketTopLayer(racket: Racket) {
     drawRacketCenter(racket)
 }
 
-fun drawRacket(racket: Racket, glueCount: Int = 0) {
+fun drawRacket(racket: Racket) {
     drawRacketBottomLayer(racket)
     drawRacketTopLayer(racket)
 }

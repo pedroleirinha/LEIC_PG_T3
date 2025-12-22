@@ -7,8 +7,6 @@ const val BRICK_HEIGHT = 15
 const val BRICK_WIDTH = 32
 
 const val TopMarginBricks = BRICK_HEIGHT * 3
-const val LeftMarginBricks = BRICK_WIDTH
-const val RightMarginBricks = BRICK_WIDTH
 const val SINGLE_HIT = 1
 const val DOUBLE_HIT = 2
 const val INDESTRUCTIBLE = -1
