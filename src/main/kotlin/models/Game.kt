@@ -17,6 +17,8 @@ const val KEY_F_CODE = 70
 const val KEY_X_CODE = 88
 const val KEY_E_CODE = 69
 const val KEY_C_CODE = 67
+const val LIVES_COUNT = 5
+const val INITIAL_LEVEL = 1
 
 enum class Collision {
     HORIZONTAL,
@@ -24,6 +26,12 @@ enum class Collision {
     BOTH,
     NONE
 }
+
+val gameLevels = listOf(
+    firstBricksLayout,
+    secondBricksLayout,
+    thirdBricksLayout
+)
 
 enum class DIRECTIONS(val value: Int) {
     DOWN(value = 1),
@@ -37,12 +45,23 @@ data class Game(
     val racket: Racket = Racket(),
     val bricks: List<Brick> = emptyList(),
     val points: Int = 0,
-    val lives: Int = 5,
+    val lives: Int = LIVES_COUNT,
     val giftsOnScreen: List<Gift> = listOf(),
-    val activeGifts: List<Gift> = listOf()
+    val activeGifts: List<Gift> = listOf(),
+    val level: Int = INITIAL_LEVEL
 )
 
+
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
+
+fun Game.newLevel() = copy(
+    racket = Racket(),
+    bricks = createInitialBricksLayout(layout = gameLevels[this.level]),
+    balls = listOf(generateNewBall(Racket())),
+    level = this.level + 1,
+    activeGifts = emptyList(),
+    giftsOnScreen = emptyList()
+)
 
 fun Game.loseLife() = copy(lives = lives - 1)
 fun Game.newBall() = copy(balls = listOf(generateNewBall(this.racket)))
@@ -128,7 +147,7 @@ fun checkAndUpdateBallMovementAfterCollision(ball: Ball, racket: Racket, bricks:
     )
 
 fun generateLives(lives: Int): List<Ball> = (1..lives).map {
-    Ball(x = it * LIVES_X_SPACE, y = LIVES_Y_POSITION, stuck = true)
+    Ball(x = it * LIVES_X_SPACE.toDouble(), y = LIVES_Y_POSITION.toDouble(), stuck = true)
 }
 
 

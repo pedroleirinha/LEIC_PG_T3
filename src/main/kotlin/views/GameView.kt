@@ -10,7 +10,7 @@ fun gameStart() {
     val racket = Racket()
     var game = Game(
         racket = racket,
-        bricks = createInitialBricksLayout(bricksLayout),
+        bricks = createInitialBricksLayout(gameLevels.first()),
         balls = listOf(generateNewBall(racket))
     )
 
@@ -26,12 +26,16 @@ fun gameStart() {
     }
 
     arena.onMouseDown { me ->
-        if (me.down) {
-            if (game.balls.isEmpty() && game.lives > 0) {
+        if (me.down && game.lives > 0) {
+            if (game.balls.isEmpty()) {
                 game = game.newBall()
                 game = game.loseLife()
             } else {
-                game = unstuckBalls(game)
+                if (game.isGameOver() && game.level < gameLevels.size) {
+                    game = game.newLevel()
+                } else {
+                    game = unstuckBalls(game)
+                }
             }
         }
     }

@@ -27,6 +27,7 @@ fun drawBricks(bricks: List<Brick>) {
             thickness = 2
         )
 
+        /*
         if(it.gift != null){
             arena.drawText(
                 x = it.x + BRICK_WIDTH / 2,
@@ -35,7 +36,7 @@ fun drawBricks(bricks: List<Brick>) {
                 color = BLACK,
                 fontSize = 10
             )
-        }
+        }*/
 
     }
 }

@@ -9,18 +9,43 @@ val allColors: BricksColumn = BricksColumn(singleHitBrickTypes.map { BricksRow(l
 val middleColors: BricksColumn = BricksColumn(
     rows = listOf(
         BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.WHITE, BrickType.GOLD, BrickType.WHITE, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.ORANGE, BrickType.ORANGE, BrickType.ORANGE, BrickType.EMPTY)),
+        BricksRow(
+            bricks = listOf(
+                BrickType.EMPTY,
+                BrickType.ORANGE,
+                BrickType.ORANGE,
+                BrickType.ORANGE,
+                BrickType.EMPTY
+            )
+        ),
         BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.CYAN, BrickType.CYAN, BrickType.CYAN, BrickType.EMPTY)),
         BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.GREEN, BrickType.GREEN, BrickType.GREEN, BrickType.EMPTY)),
         BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.RED, BrickType.RED, BrickType.RED, BrickType.EMPTY)),
         BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.BLUE, BrickType.BLUE, BrickType.BLUE, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.EMPTY)),
-        BricksRow(bricks = listOf(BrickType.EMPTY, BrickType.SILVER, BrickType.SILVER, BrickType.SILVER, BrickType.EMPTY)),
+        BricksRow(
+            bricks = listOf(
+                BrickType.EMPTY,
+                BrickType.MAGENTA,
+                BrickType.MAGENTA,
+                BrickType.MAGENTA,
+                BrickType.EMPTY
+            )
+        ),
+        BricksRow(
+            bricks = listOf(
+                BrickType.EMPTY,
+                BrickType.SILVER,
+                BrickType.SILVER,
+                BrickType.SILVER,
+                BrickType.EMPTY
+            )
+        ),
     )
 )
 
 val allRedBricks: BricksColumn =
     BricksColumn((0 until 10).map { BricksRow(listOf(BrickType.RED, BrickType.RED, BrickType.RED)) })
+
 val allYellowBricks: BricksColumn = BricksColumn((0 until 10).mapIndexed { index, _ ->
     when (index) {
         in 0 until 2 -> BricksRow(
@@ -60,35 +85,62 @@ val allYellowBricks: BricksColumn = BricksColumn((0 until 10).mapIndexed { index
 val allGreenBricks: BricksColumn =
     BricksColumn((0 until 10).map { BricksRow(listOf(BrickType.GREEN, BrickType.GREEN, BrickType.GREEN)) })
 
-val bricksLayout: List<BricksColumn> = listOf(
+val firstBricksLayout: List<BricksColumn> = listOf(
     allColors,
     middleColors,
     allColors
 )
 
-val portugalBricksLayout: List<BricksColumn> = listOf(
+val secondBricksLayout: List<BricksColumn> = listOf(
     allRedBricks,
     allYellowBricks,
     allGreenBricks,
 )
 
-val singleBricksLayout: List<BricksColumn> = listOf(
+val thirdBricksLayout: List<BricksColumn> = listOf(
     BricksColumn(
         listOf(
-            BricksRow(bricks = listOf(BrickType.WHITE)),
+            BricksRow(listOf(BrickType.GOLD, BrickType.CYAN, BrickType.CYAN)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.RED, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.GOLD, BrickType.CYAN, BrickType.CYAN)),
         )
-    )
+    ),
+    BricksColumn(
+        listOf(
+            BricksRow(listOf(BrickType.GOLD, BrickType.WHITE, BrickType.WHITE, BrickType.WHITE, BrickType.GOLD)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.BLUE, BrickType.BLUE, BrickType.BLUE, BrickType.BLUE, BrickType.BLUE)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.MAGENTA, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.BLUE, BrickType.BLUE, BrickType.BLUE, BrickType.BLUE, BrickType.BLUE)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.GOLD, BrickType.WHITE, BrickType.WHITE, BrickType.WHITE, BrickType.GOLD)),
+        )
+    ),
+    BricksColumn(
+        listOf(
+            BricksRow(listOf(BrickType.CYAN, BrickType.CYAN, BrickType.GOLD)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.RED)),
+            BricksRow(listOf(BrickType.CYAN, BrickType.CYAN, BrickType.GOLD)),
+        )
+    ),
 )
-
-fun generateWallBricks(): List<Brick> {
-    var lista: List<Brick> = emptyList()
-    for (x in LeftMarginBricks * 4..WIDTH - RightMarginBricks * 4 step BRICK_WIDTH) {
-        for (y in TopMarginBricks..TopMarginBricks + BRICK_HEIGHT * 3 step BRICK_HEIGHT + 2) {
-            lista = lista + Brick(x, y, BrickType.entries.random())
-        }
-    }
-    return lista
-}
 
 fun createInitialBricksLayout(layout: List<BricksColumn>): List<Brick> {
     var lista: List<Brick> = emptyList()

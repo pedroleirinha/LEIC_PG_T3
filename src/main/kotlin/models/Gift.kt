@@ -35,7 +35,7 @@ fun Gift.isOutOfBounds() = this.y > HEIGHT
 
 fun Gift.isCollidingWithRacket(racket: Racket) =
     ((this.x + GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width) ||
-        (this.x - GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width)) &&
+            (this.x - GIFT_CIRCLE_RADIUS in racket.x..racket.x + racket.width)) &&
             (this.y + GIFT_CIRCLE_RADIUS in racket.y..racket.y + RACKET_HEIGHT)
 
 
@@ -45,7 +45,7 @@ fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
     val bricksMutableList = bricks.toMutableList()
 
     availableGifts.forEach {
-        val randomIndex = (0 until bricks.size).random()
+        val randomIndex = getBreakableUnusedBrick(bricks)
         val randomBrick = bricks[randomIndex]
         bricksMutableList[randomIndex] =
             randomBrick.copy(gift = Gift(x = randomBrick.x, y = randomBrick.y, deltaY = 2, type = it))
@@ -54,7 +54,21 @@ fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
     return bricksMutableList.toList()
 }
 
-fun chooseGiftAction(gift: Gift, game: Game):Game {
+
+/*
+* CAN IMPROVE ON IT
+* */
+fun getBreakableUnusedBrick(bricks: List<Brick>): Int {
+    var index: Int = 0
+    do {
+        index = (0 until bricks.size).random()
+        val brick = bricks[index]
+    } while (brick.type.hits == INDESTRUCTIBLE)
+
+    return index;
+}
+
+fun chooseGiftAction(gift: Gift, game: Game): Game {
     val giftedRacket = when (gift.type) {
         GiftType.EXTENDED -> game.racket.setExtended()
         GiftType.GLUE -> game.racket.toggleStickiness()

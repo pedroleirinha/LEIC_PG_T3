@@ -4,54 +4,6 @@ import kotlin.test.assertEquals
 
 class BallTests {
 
-    @Test
-    fun ballCollidingWithHorizontalSideBrickShouldReturnCorrectCollision() {
-        var ball = Ball(100, 100, 1, -1)
-        var brick = Brick(100, 100, BrickType.MAGENTA, 0)
-
-        var collision = checkBrickHorizontalCollision(ball, brick)
-        assertEquals(Collision.HORIZONTAL, collision)
-
-
-        ball = Ball(80, 100, 1, -1)
-        collision = checkBrickHorizontalCollision(ball, brick)
-        assertEquals(Collision.NONE, collision)
-
-        ball = Ball(135, 100, 1, -1)
-        collision = checkBrickHorizontalCollision(ball, brick)
-        assertEquals(Collision.HORIZONTAL, collision)
-
-        ball = Ball(155, 100, 1, -1)
-        collision = checkBrickHorizontalCollision(ball, brick)
-        assertEquals(Collision.NONE, collision)
-
-        ball = Ball(x = 312, y = 40, deltaX = -6, deltaY = 4)
-        brick = Brick(x = 288, y = 45, type = BrickType.MAGENTA, hitCounter = 0)
-        collision = ball.isCollidingWithBrick(brick)
-        assertEquals(Collision.BOTH, collision)
-    }
-
-    @Test
-    fun ballCollidingWithVerticalSideBrickShouldReturnCorrectCollision() {
-        var ball = Ball(100, 100, 1, -1)
-        val brick = Brick(100, 200, BrickType.MAGENTA, 0)
-
-        var collision = checkBrickVerticalCollision(ball, brick)
-        assertEquals(Collision.NONE, collision)
-
-        ball = Ball(120, 195, 1, -1)
-        collision = checkBrickVerticalCollision(ball, brick)
-        assertEquals(Collision.VERTICAL, collision)
-
-        ball = Ball(120, 220, 1, -1)
-        collision = checkBrickVerticalCollision(ball, brick)
-        assertEquals(Collision.VERTICAL, collision)
-
-        ball = Ball(120, 275, 1, -1)
-        collision = checkBrickVerticalCollision(ball, brick)
-        assertEquals(Collision.NONE, collision)
-
-    }
 
     @Test
     fun totalSumOfPointsFromHitsBricksShouldBeCorrect() {

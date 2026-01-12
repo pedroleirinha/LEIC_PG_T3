@@ -22,8 +22,8 @@ const val BALL_MIN_WEIGHT = 0.5
 const val BALL_MAX_WEIGHT_DELTA = 0.5
 
 data class Ball(
-    val x: Int = 0,
-    val y: Int = 0,
+    val x: Double = 0.0,
+    val y: Double = 0.0,
     val deltaX: Int = 0,
     val deltaY: Int = 0,
     val weight: Double = 1.0,
@@ -35,8 +35,8 @@ data class Ball(
 * A nova bola está sempre a movimentar-se para cima
 * */
 fun generateNewBall(racket: Racket): Ball {
-    val xCord = racket.x + (racket.width / 2)
-    val yCord = RACKET_DEFAULT_Y_CORD - BALL_RADIUS
+    val xCord = racket.x + (racket.width / 2).toDouble()
+    val yCord = RACKET_DEFAULT_Y_CORD - BALL_RADIUS.toDouble()
 
     val xDelta = 0
     val yDelta = INITIAL_DELTA_Y
@@ -52,7 +52,7 @@ fun Ball.upVelocity() = copy(weight = min(weight + BALL_MAX_WEIGHT_DELTA, BALL_M
 * Gera uma nova bola com movimentos horizontais e com velocidades verticais diferentes.
 * A nova bola está sempre a movimentar-se para cima
 * */
-fun generateNewBallFromPosition(xCord: Int, yCord: Int): Ball {
+fun generateNewBallFromPosition(xCord: Double, yCord: Double): Ball {
     val xDelta = (-MAX_DELTA_X..MAX_DELTA_X).random()
     val yDelta = (1..MAX_DELTA_Y).random()
 
@@ -68,14 +68,14 @@ fun Ball.move() =
     if (!this.stuck) copy(x = this.horizontalMovement(), y = this.verticalMovement()) else this
 
 
-fun ballMovementCalc(n: Int, delta: Int, weight: Double) =
-    (n + (delta * weight)).roundToInt()
+fun ballMovementCalc(n: Double, delta: Int, weight: Double) =
+    (n + (delta * weight))
 
-fun Ball.horizontalMovement() =
+fun Ball.horizontalMovement(): Double =
     ballMovementCalc(this.x, this.deltaX, this.weight)
 
 
-fun Ball.verticalMovement() =
+fun Ball.verticalMovement(): Double =
     ballMovementCalc(this.y, this.deltaY, this.weight)
 
 /*
@@ -83,10 +83,10 @@ fun Ball.verticalMovement() =
 * */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     val horizontalCollision = (
-            horizontalMovement() + BALL_RADIUS in racket.x..(racket.x + racket.width) ||
-            horizontalMovement() - BALL_RADIUS in racket.x..(racket.x + racket.width)
+            (horizontalMovement() + BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width) ||
+                    (horizontalMovement() - BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width)
             )
-    val verticalCollision = (verticalMovement() + BALL_RADIUS) in racket.y..(racket.y + RACKET_HEIGHT)
+    val verticalCollision = (verticalMovement() + BALL_RADIUS).roundToInt() in racket.y..(racket.y + RACKET_HEIGHT)
 
     return when {
         horizontalCollision && verticalCollision && this.deltaY.sign == DIRECTIONS.DOWN.value -> Collision.BOTH
@@ -105,21 +105,7 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
             return res
         }
     }
-
-
     return Collision.NONE
-}
-
-fun Ball.isCollidingWithBrick(brick: Brick): Collision {
-    val horCollision = checkBrickHorizontalCollision(ball = this, brick)
-    val verCollision = checkBrickVerticalCollision(ball = this, brick)
-
-    return when {
-        horCollision != Collision.NONE && verCollision == Collision.NONE -> Collision.HORIZONTAL
-        verCollision != Collision.NONE && horCollision == Collision.NONE -> Collision.VERTICAL
-        horCollision != Collision.NONE && verCollision != Collision.NONE -> Collision.BOTH
-        else -> Collision.NONE
-    }
 }
 
 /*
