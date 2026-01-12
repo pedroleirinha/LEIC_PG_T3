@@ -6,7 +6,6 @@ import org.example.models.BRICK_WIDTH
 import org.example.models.Brick
 import org.example.models.arena
 import pt.isel.canvas.BLACK
-import pt.isel.canvas.WHITE
 
 
 fun drawBricks(bricks: List<Brick>) {

@@ -59,13 +59,13 @@ fun generateGifsInRandomBricks(bricks: List<Brick>): List<Brick> {
 * CAN IMPROVE ON IT
 * */
 fun getBreakableUnusedBrick(bricks: List<Brick>): Int {
-    var index: Int = 0
+    var index: Int
     do {
         index = (0 until bricks.size).random()
         val brick = bricks[index]
     } while (brick.type.hits == INDESTRUCTIBLE)
 
-    return index;
+    return index
 }
 
 fun chooseGiftAction(gift: Gift, game: Game): Game {
