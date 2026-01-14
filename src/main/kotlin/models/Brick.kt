@@ -46,15 +46,25 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     val dx = ball.horizontalMovement() - nearestX
     val dy = ball.verticalMovement() - nearestY
 
-    // se distância < raio → colisão
-    if (dx * dx + dy * dy <= BALL_RADIUS * BALL_RADIUS) {
+    // 1️⃣ Sem interseção → nada
+    if (dx * dx + dy * dy > BALL_RADIUS * BALL_RADIUS)
+        return Collision.NONE
 
-        return if (abs(dx) > abs(dy))
-            Collision.HORIZONTAL   // bateu nas laterais
-        else
-            Collision.VERTICAL     // bateu em cima/baixo
-    }
-    return Collision.NONE
+    // 2️⃣ Decide eixo usando o movimento
+    val absVX = abs(ball.deltaX)
+    val absVY = abs(ball.deltaY)
+
+    // 3️⃣ Se movimento claramente dominante
+    if (absVX > absVY)
+        return Collision.HORIZONTAL
+    if (absVY > absVX)
+        return Collision.VERTICAL
+
+    // 4️⃣ Empate → usa geometria
+    return if (abs(dx) > abs(dy))
+        Collision.HORIZONTAL
+    else
+        Collision.VERTICAL
 }
 
 fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)
