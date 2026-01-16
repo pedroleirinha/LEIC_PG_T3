@@ -2,6 +2,7 @@ package org.example.models
 
 import pt.isel.canvas.BLACK
 import kotlin.math.abs
+import kotlin.math.sign
 
 const val BRICK_HEIGHT = 15
 const val BRICK_WIDTH = 32
@@ -33,38 +34,44 @@ data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: In
 
 fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
 
+fun findClosestSide(value: Double, min: Double, max: Double) =
+    if (abs(value - min) > abs(value - max)) max else min
+
+
 /*
 * IMPROVE ON IT
 **/
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
     // ponto mais próximo dentro do retângulo
-    val nearestX = ball.horizontalMovement().coerceIn(brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
-    val nearestY = ball.verticalMovement().coerceIn(brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
+    val nearestX = ball.x.coerceIn(brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
+    val nearestY = ball.y.coerceIn(brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
 
     // diferença até ao centro da bola
-    val dx = ball.horizontalMovement() - nearestX
-    val dy = ball.verticalMovement() - nearestY
+    val dx = ball.x - nearestX
+    val dy = ball.y - nearestY
 
-    // 1️⃣ Sem interseção → nada
-    if (dx * dx + dy * dy > BALL_RADIUS * BALL_RADIUS)
-        return Collision.NONE
+    val nearestSideX = findClosestSide(ball.x, brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
+    val nearestSideY = findClosestSide(ball.y, brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
 
-    // 2️⃣ Decide eixo usando o movimento
-    val absVX = abs(ball.deltaX)
-    val absVY = abs(ball.deltaY)
+    val adjustedBallX = if(ball.deltaX.sign == DIRECTIONS.RIGHT.value) ball.x + BALL_RADIUS else ball.x - BALL_RADIUS
+    val adjustedBallY = if(ball.deltaY.sign == DIRECTIONS.UP.value) ball.y - BALL_RADIUS else ball.y + BALL_RADIUS
 
-    // 3️⃣ Se movimento claramente dominante
-    if (absVX > absVY)
-        return Collision.HORIZONTAL
-    if (absVY > absVX)
-        return Collision.VERTICAL
+    // diferença até ao centro da bola
+    val distanceToSideX = adjustedBallX - nearestSideX
+    val distanceToSideY = adjustedBallY - nearestSideY
 
-    // 4️⃣ Empate → usa geometria
-    return if (abs(dx) > abs(dy))
-        Collision.HORIZONTAL
-    else
-        Collision.VERTICAL
+    // se distância < raio → colisão
+    if (dx * dx + dy * dy <= BALL_RADIUS * BALL_RADIUS) {
+
+        return if (abs(distanceToSideX) < abs(distanceToSideY))
+            Collision.HORIZONTAL
+        else if (abs(distanceToSideY) < abs(distanceToSideX))
+            Collision.VERTICAL
+        else Collision.BOTH
+
+    }
+    return Collision.NONE
 }
 
 fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)

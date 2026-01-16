@@ -36,14 +36,16 @@ val gameLevels = listOf(
 enum class DIRECTIONS(val value: Int) {
     DOWN(value = 1),
     UP(value = -1),
+    RIGHT(value = 1),
+    LEFT(value = -1),
 }
 
 data class Area(val width: Int = WIDTH, val height: Int = HEIGHT)
 data class Game(
     val area: Area = Area(),
-    val balls: List<Ball> = emptyList(),
+    val balls: List<Ball> = listOf(generateNewBall(Racket())),
     val racket: Racket = Racket(),
-    val bricks: List<Brick> = emptyList(),
+    val bricks: List<Brick> = createInitialBricksLayout(layout = gameLevels.first()),
     val points: Int = 0,
     val lives: Int = LIVES_COUNT,
     val giftsOnScreen: List<Gift> = listOf(),
