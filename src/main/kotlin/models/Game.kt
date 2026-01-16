@@ -52,6 +52,7 @@ data class Game(
     val activeGifts: List<Gift> = listOf(),
     val level: Int = INITIAL_LEVEL
 )
+
 val arena = Canvas(WIDTH, HEIGHT, BACKGROUND_COLOR)
 
 fun Game.newLevel() = copy(
@@ -206,7 +207,5 @@ fun Game.handleActiveGifts(): Game {
 /*
 * If there are not bricks, other than INDESTRUCTIBLE, left than the game ends
 * */
-fun Game.isGameOver() = (
-    this.bricks.filter { it.type != BrickType.GOLD }.isEmpty()
-    ) || (this.balls.isEmpty() && this.lives == 0)
+fun Game.isGameOver() = this.bricks.excludingGold().isEmpty() || (this.balls.isEmpty() && this.lives == 0)
 

@@ -33,14 +33,12 @@ enum class BrickType(val points: Int, val hits: Int, val color: Int) {
 data class Brick(val x: Int, val y: Int, val type: BrickType, val hitCounter: Int = 0, val gift: Gift? = null)
 
 fun List<Brick>.excludingEmpty() = this.filter { it.type != BrickType.EMPTY }
+fun List<Brick>.excludingGold() = this.filter { it.type != BrickType.GOLD }
 
 fun findClosestSide(value: Double, min: Double, max: Double) =
     if (abs(value - min) > abs(value - max)) max else min
 
 
-/*
-* IMPROVE ON IT
-**/
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
     // ponto mais próximo dentro do retângulo
@@ -51,27 +49,127 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     val dx = ball.x - nearestX
     val dy = ball.y - nearestY
 
+    //lado mais perto do "edge" da bola
     val nearestSideX = findClosestSide(ball.x, brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
     val nearestSideY = findClosestSide(ball.y, brick.y.toDouble(), brick.y.toDouble() + BRICK_HEIGHT)
 
-    val adjustedBallX = if(ball.deltaX.sign == DIRECTIONS.RIGHT.value) ball.x + BALL_RADIUS else ball.x - BALL_RADIUS
-    val adjustedBallY = if(ball.deltaY.sign == DIRECTIONS.UP.value) ball.y - BALL_RADIUS else ball.y + BALL_RADIUS
+    val adjustedBallX =
+        if (ball.deltaX.sign == DIRECTIONS.RIGHT.value) ball.x + BALL_RADIUS else ball.x - BALL_RADIUS
+    val adjustedBallY =
+        if (ball.deltaY.sign == DIRECTIONS.UP.value) ball.y - BALL_RADIUS else ball.y + BALL_RADIUS
 
-    // diferença até ao centro da bola
+    // diferença do edge da bola até ao lado do brick mais perto
     val distanceToSideX = adjustedBallX - nearestSideX
     val distanceToSideY = adjustedBallY - nearestSideY
 
-    // se distância < raio → colisão
+    // se distância < raio = colisão
     if (dx * dx + dy * dy <= BALL_RADIUS * BALL_RADIUS) {
 
         return if (abs(distanceToSideX) < abs(distanceToSideY))
             Collision.HORIZONTAL
         else if (abs(distanceToSideY) < abs(distanceToSideX))
             Collision.VERTICAL
-        else Collision.BOTH
-
+        else {
+            handleCornerCollision(ball, brick, nearestSideX, nearestSideY)
+        }
     }
     return Collision.NONE
+}
+
+fun handleCornerCollision(ball: Ball, brick: Brick, nearestSideX: Double, nearestSideY: Double): Collision {
+    val isTopLeftCorner = nearestSideX == brick.x.toDouble() && nearestSideY == brick.y.toDouble()
+    val isTopRightCorner = nearestSideX != brick.x.toDouble() && nearestSideY == brick.y.toDouble()
+    val isBottomLeftCorner = nearestSideX == brick.x.toDouble() && nearestSideY != brick.y.toDouble()
+    val isBottomRightCorner = nearestSideX != brick.x.toDouble() && nearestSideY != brick.y.toDouble()
+
+    // Se não é um canto, retorna NONE
+    if (!isTopLeftCorner && !isTopRightCorner &&
+        !isBottomLeftCorner && !isBottomRightCorner
+    ) {
+        return Collision.NONE
+    }
+
+    return when {
+        isTopLeftCorner -> handleTopLeftCorner(ball)
+        isTopRightCorner -> handleTopRightCorner(ball)
+        isBottomLeftCorner -> handleBottomLeftCorner(ball)
+        isBottomRightCorner -> handleBottomRightCorner(ball)
+        else -> Collision.NONE
+    }
+}
+
+fun handleTopLeftCorner(ball: Ball): Collision = when (ball.deltaX.sign) {
+    DIRECTIONS.RIGHT.value -> {
+        when (ball.deltaY.sign) {
+            DIRECTIONS.UP.value -> Collision.HORIZONTAL
+            else -> Collision.BOTH
+        }
+    }
+
+    DIRECTIONS.LEFT.value -> {
+        when (ball.deltaY.sign) {
+            DIRECTIONS.DOWN.value -> Collision.VERTICAL
+            else -> Collision.NONE
+        }
+    }
+
+    else -> Collision.NONE
+}
+fun handleTopRightCorner(ball: Ball): Collision {
+    return when (ball.deltaX.sign) {
+        DIRECTIONS.RIGHT.value -> {
+            when (ball.deltaY.sign) {
+                DIRECTIONS.DOWN.value -> Collision.VERTICAL
+                else -> Collision.NONE
+            }
+        }
+        DIRECTIONS.LEFT.value -> {
+            when (ball.deltaY.sign) {
+                DIRECTIONS.DOWN.value -> Collision.BOTH
+                else -> Collision.HORIZONTAL
+            }
+        }
+
+        else -> Collision.NONE
+    }
+}
+fun handleBottomLeftCorner(ball: Ball): Collision {
+    return when (ball.deltaX.sign) {
+        DIRECTIONS.RIGHT.value -> {
+            when (ball.deltaY.sign) {
+                DIRECTIONS.UP.value -> Collision.BOTH
+                else -> Collision.HORIZONTAL
+            }
+        }
+
+        DIRECTIONS.LEFT.value -> {
+            when (ball.deltaY.sign) {
+                DIRECTIONS.UP.value -> Collision.VERTICAL
+                else -> Collision.NONE
+            }
+        }
+
+        else -> Collision.NONE
+    }
+}
+fun handleBottomRightCorner(ball: Ball): Collision {
+    return when (ball.deltaX.sign) {
+        DIRECTIONS.LEFT.value -> {
+            when (ball.deltaY.sign) {
+                DIRECTIONS.UP.value -> Collision.BOTH
+                else -> Collision.HORIZONTAL
+            }
+        }
+
+        DIRECTIONS.RIGHT.value -> {
+            when (ball.deltaY.sign) {
+                DIRECTIONS.UP.value -> Collision.VERTICAL
+                else -> Collision.NONE
+            }
+        }
+
+        else -> Collision.NONE
+    }
 }
 
 fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)

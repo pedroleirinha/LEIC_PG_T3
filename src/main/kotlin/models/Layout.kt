@@ -100,21 +100,21 @@ val secondBricksLayout: List<BricksColumn> = listOf(
 val thirdBricksLayout: List<BricksColumn> = listOf(
     BricksColumn(
         listOf(
-            BricksRow(listOf(BrickType.GOLD, BrickType.GOLD, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.EMPTY)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.GREEN)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.GREEN)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.GREEN)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.GREEN)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.GREEN)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.GREEN)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.EMPTY, BrickType.EMPTY)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.GOLD, BrickType.GOLD)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.GREEN)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.EMPTY, BrickType.EMPTY)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
         )
     ),
     BricksColumn(
         listOf(
-            BricksRow(listOf(BrickType.GOLD, BrickType.WHITE, BrickType.WHITE, BrickType.WHITE, BrickType.GOLD)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.WHITE, BrickType.WHITE, BrickType.WHITE, BrickType.SILVER)),
             BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
             BricksRow(listOf(BrickType.BLUE, BrickType.RED, BrickType.ORANGE, BrickType.YELLOW, BrickType.MAGENTA)),
             BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
@@ -123,21 +123,21 @@ val thirdBricksLayout: List<BricksColumn> = listOf(
             BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
             BricksRow(listOf(BrickType.BLUE, BrickType.RED, BrickType.ORANGE, BrickType.YELLOW, BrickType.MAGENTA)),
             BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY, BrickType.EMPTY)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.WHITE, BrickType.WHITE, BrickType.WHITE, BrickType.GOLD)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.WHITE, BrickType.WHITE, BrickType.WHITE, BrickType.SILVER)),
         )
     ),
     BricksColumn(
         listOf(
-            BricksRow(listOf(BrickType.GOLD, BrickType.GOLD, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.GOLD)),
-            BricksRow(listOf(BrickType.GOLD, BrickType.GOLD, BrickType.GOLD)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.GREEN, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.EMPTY, BrickType.EMPTY, BrickType.SILVER)),
+            BricksRow(listOf(BrickType.SILVER, BrickType.SILVER, BrickType.SILVER)),
         )
     ),
 )

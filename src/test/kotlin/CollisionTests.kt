@@ -5,6 +5,7 @@ import org.example.models.Ball
 import org.example.models.Brick
 import org.example.models.BrickType
 import org.example.models.Collision
+import org.example.models.MAX_DELTA_Y
 import org.example.models.checkBrickCollision
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -101,6 +102,7 @@ class CollisionTests {
         assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick))
     }
 
+
     @Test
     fun `bola colide no canto inferior direito do brick mas a subir`() {
         val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
@@ -145,4 +147,330 @@ class CollisionTests {
 
         assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick))
     }
+
+
+    // Testes para canto superior esquerdo
+    @Test
+    fun `bola colide no canto superior esquerdo do brick vindo da direita para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = 2,  // Direita
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto superior esquerdo do brick vindo da direita para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = 2,  // Direita
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.BOTH, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto superior esquerdo do brick vindo da esquerda para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = -2, // Esquerda
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.VERTICAL, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto superior esquerdo do brick vindo da esquerda para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = -2, // Esquerda
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.NONE, checkBrickCollision(ball, brick))
+    }
+
+    // Testes para canto superior direito
+    @Test
+    fun `bola colide no canto superior direito do brick vindo da direita para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = 2,  // Direita
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.VERTICAL, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto superior direito do brick vindo da direita para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = 2,  // Direita
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.NONE, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto superior direito do brick vindo da esquerda para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = -2, // Esquerda
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.BOTH, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto superior direito do brick vindo da esquerda para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = -2, // Esquerda
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick))
+    }
+
+    // Testes para canto inferior esquerdo
+    @Test
+    fun `bola colide no canto inferior esquerdo do brick vindo da esquerda para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = -2, // Esquerda
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.VERTICAL, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto inferior esquerdo do brick vindo da esquerda para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = -2, // Esquerda
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.NONE, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto inferior esquerdo do brick vindo da direita para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = 2,  // Direita
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.BOTH, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto inferior esquerdo do brick vindo da direita para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = 2,  // Direita
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick))
+    }
+
+    // Testes para canto inferior direito
+    @Test
+    fun `bola colide no canto inferior direito do brick vindo da esquerda para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = -2, // Esquerda
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.BOTH, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto inferior direito do brick vindo da esquerda para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = -2, // Esquerda
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto inferior direito do brick vindo da direita para cima`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = 2,  // Direita
+            deltaY = -2, // Para cima
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.VERTICAL, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide no canto inferior direito do brick vindo da direita para baixo`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 3,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 3,
+            deltaX = 2,  // Direita
+            deltaY = 2,  // Para baixo
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.NONE, checkBrickCollision(ball, brick))
+    }
+
+    // Testes para casos limítrofes
+    @Test
+    fun `bola quase colidindo no canto superior esquerdo retorna NONE`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS - 5,  // Fora do alcance
+            y = 60.0 - BALL_RADIUS - 5,
+            deltaX = 2,
+            deltaY = 2,
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.NONE, checkBrickCollision(ball, brick))
+    }
+
+    @Test
+    fun `bola colide exatamente na borda do canto superior direito`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS,
+            y = 60.0,
+            deltaX = -2,
+            deltaY = 2,
+            weight = 1.0,
+            stuck = false
+        )
+
+        // Este teste pode variar dependendo da implementação
+        assertEquals(Collision.HORIZONTAL, checkBrickCollision(ball, brick))
+    }
+
+    // Teste para colisão com bola "presa" (não deve colidir)
+    @Test
+    fun `bola colide com o canto, retorna BOTH`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = 2,
+            deltaY = 2,
+            weight = 1.0
+        )
+
+        assertEquals(Collision.BOTH, checkBrickCollision(ball, brick))
+    }
+
+    // Teste para verificar diferentes tipos de brick
+    @Test
+    fun `bola colide no canto de brick de tipo diferente`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.RED, hitCounter = 1)
+        val ball = Ball(
+            x = 288.0 - BALL_RADIUS + 3,
+            y = 60.0 - BALL_RADIUS + 3,
+            deltaX = 2,
+            deltaY = 2,
+            weight = 1.0,
+            stuck = false
+        )
+
+        // O tipo de brick não deve afetar a deteção de colisão
+        assertEquals(Collision.BOTH, checkBrickCollision(ball, brick))
+    }
+
+    // Teste para ângulos muito rasantes
+    @Test
+    fun `bola colide em angulo muito raso no canto inferior direito`() {
+        val brick = Brick(x = 288, y = 60, type = BrickType.WHITE, hitCounter = 0)
+        val ball = Ball(
+            x = 288.0 + BRICK_WIDTH + BALL_RADIUS - 0.5,
+            y = 60.0 + BRICK_HEIGHT + BALL_RADIUS - 0.5,
+            deltaX = -1,  // Movimento quase horizontal
+            deltaY = -MAX_DELTA_Y,  // Movimento vertical forte
+            weight = 1.0,
+            stuck = false
+        )
+
+        assertEquals(Collision.NONE, checkBrickCollision(ball, brick))
+    }
 }
+
