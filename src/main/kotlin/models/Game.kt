@@ -29,9 +29,9 @@ enum class Collision {
 }
 
 val gameLevels = listOf(
+    thirdBricksLayout,
     firstBricksLayout,
     secondBricksLayout,
-    thirdBricksLayout,
 )
 
 enum class DIRECTIONS(val value: Int) {

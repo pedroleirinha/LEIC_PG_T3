@@ -41,8 +41,7 @@ fun List<Brick>.excludingGold() = this.filter { it.type != BrickType.GOLD }
 
 fun findClosestSide(value: Double, min: Double, max: Double) =
     if (abs(value - min) > abs(value - max)) max else min
-
-fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
+fun checkBrickCollisionWithCorners(ball: Ball, brick: Brick): Collision {
 
     val ballX = ball.horizontalMovement()
     val ballY = ball.verticalMovement()
@@ -92,7 +91,6 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     }
     return Collision.NONE
 }
-
 fun handleCornerCollision(ball: Ball, brick: Brick, nearestSideX: Double, nearestSideY: Double): Collision {
     val isTopLeftCorner = nearestSideX == brick.x.toDouble() && nearestSideY == brick.y.toDouble()
     val isTopRightCorner = nearestSideX != brick.x.toDouble() && nearestSideY == brick.y.toDouble()
@@ -114,7 +112,6 @@ fun handleCornerCollision(ball: Ball, brick: Brick, nearestSideX: Double, neares
         else -> Collision.NONE
     }
 }
-
 fun handleTopLeftCorner(ball: Ball): Collision = when (ball.deltaX.sign) {
     DIRECTIONS.RIGHT.value -> {
         when (ball.deltaY.sign) {
@@ -132,7 +129,6 @@ fun handleTopLeftCorner(ball: Ball): Collision = when (ball.deltaX.sign) {
 
     else -> Collision.VERTICAL
 }
-
 fun handleTopRightCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.RIGHT.value -> {
@@ -152,7 +148,6 @@ fun handleTopRightCorner(ball: Ball): Collision {
         else -> Collision.VERTICAL
     }
 }
-
 fun handleBottomLeftCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.RIGHT.value -> {
@@ -172,7 +167,6 @@ fun handleBottomLeftCorner(ball: Ball): Collision {
         else -> Collision.NONE
     }
 }
-
 fun handleBottomRightCorner(ball: Ball): Collision {
     return when (ball.deltaX.sign) {
         DIRECTIONS.LEFT.value -> {
@@ -192,6 +186,37 @@ fun handleBottomRightCorner(ball: Ball): Collision {
         else -> Collision.NONE
     }
 }
+
+fun findNearestBrickSide(value: Int, side1: Int, side2: Int) = when {
+    value < side1 -> side1
+    value > side2 -> side2
+    else -> value
+}
+
+fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
+
+    val ballX = ball.horizontalMovement().toInt()
+    val ballY = ball.verticalMovement().toInt()
+
+    // Lado do BRICK mais perto da bola
+    val nearestBrickX = findNearestBrickSide(value = ballX, side1 = brick.x, side2 = brick.x + BRICK_WIDTH)
+    val nearestBrickY = findNearestBrickSide(value = ballY, side1 = brick.y, side2 = brick.y + BRICK_HEIGHT)
+
+    // diferença até ao centro da bola
+    val distanceX = ballX - nearestBrickX
+    val distanceY = ballY - nearestBrickY
+
+    if (distanceX * distanceX + distanceY * distanceY <= BALL_RADIUS * BALL_RADIUS) {
+
+        return if (abs(distanceX) > abs(distanceY))
+            Collision.HORIZONTAL
+        else
+            Collision.VERTICAL
+    }
+    return Collision.NONE
+}
+
+
 
 fun Brick.addHit() = this.copy(hitCounter = this.hitCounter + 1)
 fun Brick.isBroken() = this.hitCounter == this.type.hits
