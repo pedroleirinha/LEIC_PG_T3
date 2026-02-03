@@ -28,8 +28,8 @@ enum class Collision {
 }
 
 val gameLevels = listOf(
-    firstBricksLayout,
     thirdBricksLayout,
+    firstBricksLayout,
     secondBricksLayout,
 )
 

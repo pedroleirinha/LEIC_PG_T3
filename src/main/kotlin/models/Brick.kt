@@ -43,8 +43,8 @@ fun findClosestSide(value: Double, min: Double, max: Double) =
 
 fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
 
-    val ballX = ball.x
-    val ballY = ball.y
+    val ballX = ball.horizontalMovement()
+    val ballY = ball.verticalMovement()
 
     // ponto mais próximo dentro do retângulo
     val nearestX = ballX.coerceIn(brick.x.toDouble(), brick.x.toDouble() + BRICK_WIDTH)
@@ -76,10 +76,10 @@ fun checkBrickCollision(ball: Ball, brick: Brick): Collision {
     val distanceToSideY = (adjustedBallY - nearestSideY)
 
     // se distância < raio = colisão
-    if (dx * dx + dy * dy <= BALL_RADIUS * BALL_RADIUS) {
+    if ((dx * dx) + (dy * dy) <= (BALL_RADIUS * BALL_RADIUS) + 10) {
 
         if (dx == 0.0 && dy == 0.0) {
-            println("dx0 e dy0")
+            println("dx0 e dy0 -> Corner")
         }
         return if (abs(distanceToSideX) < abs(distanceToSideY))
             Collision.HORIZONTAL
