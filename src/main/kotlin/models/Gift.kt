@@ -97,7 +97,7 @@ fun giftDuplicateBall(balls: List<Ball>): List<Ball> {
 }
 
 fun giftCancelEffects(game: Game): Game {
-    val newBallsList: List<Ball> = game.balls.map { it.copy(mass = BALL_INITIAL_MASS, stuck = false) }
+    val newBallsList: List<Ball> = game.balls.map { it.copy(color = BALL_COLOR, radius = BALL_RADIUS, mass = BALL_INITIAL_MASS, stuck = false) }
     val racket: Racket = game.racket.copy(sticky = false, extended = false, width = RACKET_INITIAL_WIDTH)
 
     return game.copy(balls = newBallsList, racket = racket, activeGifts = emptyList())

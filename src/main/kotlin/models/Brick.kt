@@ -250,6 +250,7 @@ fun addHitsToCollidedBricks(bricks: List<Brick>, balls: List<Ball>): List<Brick>
         } else {
             brick
         }
+
     }
     return newBricks
 }

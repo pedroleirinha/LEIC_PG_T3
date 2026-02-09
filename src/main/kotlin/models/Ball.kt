@@ -2,7 +2,12 @@ package org.example.models
 
 import org.example.views.RACKET_DEFAULT_Y_CORD
 import org.example.views.RACKET_HEIGHT
+import pt.isel.canvas.BLUE
 import pt.isel.canvas.CYAN
+import pt.isel.canvas.GREEN
+import pt.isel.canvas.MAGENTA
+import pt.isel.canvas.YELLOW
+import pt.isel.canvas.playSound
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -27,7 +32,10 @@ data class Ball(
     val deltaX: Int = 0,
     val deltaY: Int = 0,
     val mass: Double = BALL_INITIAL_MASS,
-    val stuck: Boolean = true
+    val stuck: Boolean = true,
+    val radius: Int = BALL_RADIUS,
+    val color: Int = BALL_COLOR,
+    val flagBigBall: Boolean = false
 )
 
 /*
@@ -46,9 +54,9 @@ fun generateNewBall(racket: Racket): Ball {
 }
 
 //Aumenta a massa da bola fazendo que ande mais rápido. O max faz com que a massa não ultrapasse o 1.5
-fun Ball.slowVelocity() = copy(mass = max(mass - BALL_MAX_WEIGHT_DELTA, BALL_MIN_WEIGHT))
+fun Ball.slowVelocity() = copy(radius= BALL_RADIUS+2 , mass = max(mass - BALL_MAX_WEIGHT_DELTA, BALL_MIN_WEIGHT), color = listOf<Int>(YELLOW, MAGENTA,CYAN, GREEN, BLUE).random(), flagBigBall = true )
 //Diminui a massa da bola fazendo que ande mais devagar. O min faz com que a massa não seja inferior que 0.5
-fun Ball.upVelocity() = copy(mass = min(mass + BALL_MAX_WEIGHT_DELTA, BALL_MAX_WEIGHT))
+fun Ball.upVelocity() = copy(mass = min(mass + BALL_MAX_WEIGHT_DELTA, BALL_MAX_WEIGHT), flagBigBall = false)
 
 /*
 * Gera uma nova bola com movimentos horizontais e com velocidades verticais diferentes.
@@ -86,10 +94,10 @@ fun Ball.verticalMovement(): Double =
 * */
 fun Ball.isCollidingWithRacket(racket: Racket): Collision {
     val horizontalCollision = (
-            (horizontalMovement() + BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width) ||
-                    (horizontalMovement() - BALL_RADIUS).roundToInt() in racket.x..(racket.x + racket.width)
+            (horizontalMovement() + radius /*BALL_RADIUS*/).roundToInt() in racket.x..(racket.x + racket.width) ||
+                    (horizontalMovement() - radius /*BALL_RADIUS*/).roundToInt() in racket.x..(racket.x + racket.width)
             )
-    val verticalCollision = (verticalMovement() + BALL_RADIUS).roundToInt() in racket.y..(racket.y + RACKET_HEIGHT)
+    val verticalCollision = (verticalMovement() + radius /*BALL_RADIUS*/).roundToInt() in racket.y..(racket.y + RACKET_HEIGHT)
 
     return when {
         horizontalCollision && verticalCollision && this.deltaY.sign == DIRECTIONS.DOWN.value -> Collision.BOTH
@@ -109,12 +117,12 @@ fun getBricksOnTrajectory(ball: Ball, bricks: List<Brick>): List<Brick> {
     val adjustedY = ball.verticalMovement()
 
     val vBricks = bricks.filter {
-        adjustedX - BALL_RADIUS in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH ||
-                adjustedX + BALL_RADIUS in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH
+        adjustedX - ball.radius /*BALL_RADIUS*/ in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH ||
+                adjustedX + ball.radius /*BALL_RADIUS*/ in it.x.toDouble()..it.x.toDouble() + BRICK_WIDTH
     }
     val hBricks = bricks.filter {
-        adjustedY - BALL_RADIUS in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT ||
-                adjustedY + BALL_RADIUS in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT
+        adjustedY - ball.radius /*BALL_RADIUS*/ in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT ||
+                adjustedY + ball.radius /*BALL_RADIUS*/ in it.y.toDouble()..it.y.toDouble() + BRICK_HEIGHT
     }
 
 
@@ -140,10 +148,10 @@ fun Ball.checkBricksCollision(bricks: List<Brick>): Collision {
 * Retorna um objeto do tipo Collision
 * */
 fun Ball.isCollidingWithArea() = when {
-    this.horizontalMovement() - BALL_RADIUS <= 0 ||
-            this.horizontalMovement() + BALL_RADIUS >= WIDTH -> Collision.HORIZONTAL
+    this.horizontalMovement() - radius /*BALL_RADIUS*/ <= 0 ||
+            this.horizontalMovement() + radius /*BALL_RADIUS*/ >= WIDTH -> Collision.HORIZONTAL
 
-    this.verticalMovement() - BALL_RADIUS <= 0 -> Collision.VERTICAL
+    this.verticalMovement() - radius /*BALL_RADIUS*/ <= 0 -> Collision.VERTICAL
 
     else -> Collision.NONE
 }
@@ -174,7 +182,10 @@ fun updateBallAfterCollisionArea(ball: Ball, areaCollision: Collision): Ball {
 /*
 * Atualiza o deltaX e deltaY da bola dependendo da colisão detetada com a Area de jogo*/
 fun updateBallAfterCollisionBrick(ball: Ball, brickCollision: Collision): Ball {
+    playSound("Arkanoid SFX (8)")
+
     return when {
+        ball.flagBigBall -> ball
         brickCollision == Collision.BOTH -> ball.copy(deltaX = -ball.deltaX, deltaY = -ball.deltaY)
         brickCollision == Collision.HORIZONTAL -> ball.copy(deltaX = -ball.deltaX)
         brickCollision == Collision.VERTICAL -> ball.copy(deltaY = -ball.deltaY)
@@ -191,7 +202,7 @@ fun updateBallAfterCollisionRacket(ball: Ball, racket: Racket): Ball {
     val newDeltaY = -ball.deltaY
 
     val newBallDeltaX = ball.adjustDirectionAfterColliding(newDeltaX)
-
+    playSound("click")
     return ball.copy(deltaX = newBallDeltaX, deltaY = newDeltaY, stuck = racket.sticky)
 }
 

@@ -2,19 +2,35 @@ package org.example.views
 
 import org.example.models.*
 import pt.isel.canvas.ESCAPE_CODE
+import pt.isel.canvas.RED
 import pt.isel.canvas.WHITE
 import pt.isel.canvas.YELLOW
+import pt.isel.canvas.loadSounds
+import pt.isel.canvas.playSound
 
 
 fun gameStart() {
 
     var game = Game()
+    var flagSound: Boolean = false
+    //loadSounds("click","Arkanoid SFX (8)","GameOver")
 
     arena.onTimeProgress(period = TIME_TICK_MLS) {
-        arena.erase()
 
-        if (!game.isGameOver()) game = game.progressGame() else drawFinishText()
-        drawGame(game)
+        if (!game.isGameOver()){
+            arena.erase()
+            game = game.progressGame()
+            drawGame(game)
+        }
+        else {
+            drawFinishText()
+
+            if (!flagSound) {
+                 playSound("GameOver")
+                 flagSound = true
+            }
+        }
+
     }
 
     arena.onMouseMove { me ->
@@ -70,6 +86,12 @@ fun gameStart() {
 
         if (it.code == KEY_G_CODE) {
             game = game.copy(showGiftsOnBricks = !game.showGiftsOnBricks)
+            println("Gifts visiveis")
+        }
+
+        if (it.code == KEY_H_CODE) {
+
+            game = game.copy(balls = game.balls + Ball(radius = 3, color = RED,  x = game.racket.x.toDouble(), y = game.racket.y.toDouble(), deltaX = 0, deltaY = -4, stuck = false, flagBigBall = true))
             println("Gifts visiveis")
         }
 

@@ -15,8 +15,9 @@ fun drawBalls(ballsList: List<Ball>) {
         arena.drawCircle(
             xCenter = it.x.roundToInt(),
             yCenter = it.y.roundToInt(),
-            radius = BALL_RADIUS,
-            color = BALL_COLOR
+            radius = it.radius,          //BALL_RADIUS,
+            color =  it.color            //BALL_COLOR,
+
         )
     }
 }

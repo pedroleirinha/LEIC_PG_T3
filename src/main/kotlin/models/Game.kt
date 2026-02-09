@@ -2,6 +2,7 @@ package org.example.models
 
 import pt.isel.canvas.BLACK
 import pt.isel.canvas.Canvas
+import pt.isel.canvas.playSound
 
 const val WIDTH = BRICK_WIDTH * 13
 const val HEIGHT = 600
@@ -13,10 +14,11 @@ const val KEY_S_CODE = 83
 const val KEY_D_CODE = 68
 const val KEY_F_CODE = 70
 const val KEY_G_CODE = 71
+const val KEY_H_CODE = 72
 const val KEY_X_CODE = 88
 const val KEY_E_CODE = 69
 const val KEY_C_CODE = 67
-const val LIVES_COUNT = 5
+const val LIVES_COUNT = 5 //5
 const val INITIAL_LEVEL = 1
 
 enum class Collision {
